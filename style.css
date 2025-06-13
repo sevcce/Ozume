@@ -1,0 +1,70 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #ffe6e6;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    margin-top: 100px;
+  }
+  
+  h1 {
+    color: #b91a22;
+  }
+  
+  #messageBox {
+    margin: 30px auto;
+    padding: 20px;
+    width: 60%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #ffcccc;
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  button {
+    background: #bc7dc3;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  button:hover {
+    background: #803e86;
+  }
+  .photo-carousel {
+    overflow: hidden;
+    width: 100%;
+    background: #fff0f5;
+    padding: 20px 0;
+  }
+  
+  .carousel-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    animation: scrollPhotos 120s linear infinite; /* Süreyi artırıyoruz */
+  }
+  
+  .carousel-track img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
+  }
+  
+  @keyframes scrollPhotos {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%); /* Veya -100% yerine -N px kullanılabilir */
+    }
+  }
