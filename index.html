@@ -86,6 +86,76 @@
     </div>
   </div>
 
+  <div class="surprise-box">
+    <h2>Doğruyu Yaz, Sürprizi Kap:</h2>
+    <p id="questionText" style="font-weight: bold; font-size: 1.1em;"></p>
+    <input type="text" id="codeInput" placeholder="Cevabı buraya yaz..." autocomplete="off" />
+    <button onclick="checkCode()">Göster</button>
+    <p id="secretMessage"></p>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "Seni ilk öptüğüm gün hangisiydi?", answer: "26agustos", message: "🎉 Doğru! Seni o günden beri daha çok seviyorum sevgilim❤️" },
+      { question: "Bugün beni ne kadar çok sevdiğini söyledin mi?", answer: "evet", message: "🎉 Harika! Söyleeeeee bir daha SÖYLEEEEEE :)" },
+      { question: "Sabah kalkınca ilk söylediğim kelime ne kimi zaman?", answer: "ney", message: "Hahahahah! Tepkimden sonraki kahkahanı duyar gibiyim😂"},
+      
+        {
+  question: "BüyükAda'da o en tepedeki kayanın üzerinde dinlediğimiz şarkı neydi?",
+  answer: "yol",
+  message:'Canını yerim! <a href="https://www.youtube.com/watch?v=U5HMzGVXVYg" target="_blank"> Hadi aç dinle🌸</a>'
+},
+      { question: "Birlikte ilk izledigimiz film?", answer: "beetlejuice", message: "Doğru! Al sana bir replik: 'I’m the ghost with the most, babe.'"},
+      { question: "Bil bakalım 17 haziran 2025 tarihinde direksiyon dersinden kim kaldı?", answer: "ozge", message: "Üzgünüm ama doğru! Fakat bil bakalım bir dahakine kim tek seferde geçecek😁"},
+      { question: "Sırbistan'daki craft birasına bayıldığımız mekanın ismi ne idi?", answer: "gunnerspub", message: "Doğru! Oraya tekrar gideceğimiz zamana her geçen gün yakklaşıyoruz sevgilim😋"},
+      { question: "Evimizi tuttuktan sonra nerede yemek yedik?", answer: "junkvegan", message:"Bravo! Gözlerimizdeki ışıltıyı unutamam sevgilim💫"},
+      { question: "2025 yılına nerede girdik?", answer:"chiangmai", message:"Doğru! 2026 yaklaşıyor, nerede girmek istediğimizi düşünmeye başlayalım güzelim🌸"},
+    ];
+
+    let currentQuestionIndex = 0;
+
+    function loadQuestion() {
+      const q = questions[currentQuestionIndex];
+      document.getElementById("questionText").textContent = q.question;
+      document.getElementById("codeInput").value = "";
+      document.getElementById("secretMessage").style.display = "none";
+      document.getElementById("secretMessage").textContent = "";
+    }
+
+    function checkCode() {
+      const input = document.getElementById("codeInput").value.trim().toLowerCase();
+      const q = questions[currentQuestionIndex];
+
+      if (input === q.answer.toLowerCase()) {
+        // Doğru cevap, mesaj göster
+        const messageEl = document.getElementById("secretMessage");
+        messageEl.innerHTML = q.message;
+        messageEl.style.display = "block";
+
+        // Bir sonraki soruya geç veya tamamla
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          setTimeout(() => {
+            loadQuestion();
+          }, 4000); // 2 saniye sonra diğer soru gelsin
+        } else {
+          setTimeout(() => {
+            alert("İşte benim sevgilim! Tüm soruları doğru cevapladın🫂");
+            // İstersen buraya başka bir işlem ekleyebilirsin
+          }, 2000);
+        }
+      } else {
+        alert("Yanlış cevap, bir daha dene çabuk 🙈");
+        document.getElementById("secretMessage").style.display = "none";
+      }
+    }
+
+    window.onload = loadQuestion;
+
+    
+    
+  </script>
+
   <script src="script.js"></script>
 </body>
 </html>
