@@ -4,12 +4,72 @@
   <meta charset="UTF-8">
   <title>Özüme</title>
   <link rel="stylesheet" href="style.css">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
+
+  <!-- HTML: Body'nin üstüne ekle -->
+<div class="clouds">
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+  <div class="cloud cloud3"></div>
+</div>
+
+<br>
+<br>
+<br>
+
+
+
+  <div style="text-align: center; font-family: Georgia, serif; color: #5a3e36; margin-top: 40px;">
+    <h2>Özüme kavuşalı...</h2>
+    <div id="counter" style="font-size: 1.3em;"></div>
+  </div>
+
+
+  
+  
+  <script>
+    const meetDate = new Date("2024-08-26T14:30:00"); // Tanışma tarihi
+  
+    function updateCounter() {
+      const now = new Date();
+      const diff = now - meetDate;
+  
+      const seconds = Math.floor(diff / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+  
+      const displayHours = hours % 24;
+      const displayMinutes = minutes % 60;
+      const displaySeconds = seconds % 60;
+  
+      document.getElementById("counter").innerText =
+        `${days} gün, ${displayHours} saat, ${displayMinutes} dakika, ${displaySeconds} saniye`;
+    }
+  
+    setInterval(updateCounter, 1000);
+    updateCounter();
+  </script>
+
+
+
+  
+  <div id="siteContent">
+
   <div class="container">
     <h1>ÖZÜME🫂</h1>
     <div id="messageBox">Seni çok seviyorum sevgilim❤️</div>
     <button onclick="showMessage()">Tıklasana</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    
+  
   </div>
   <div class="photo-carousel">
     <div class="carousel-track" id="carouselTrack">
@@ -85,14 +145,23 @@
       <!-- Yeni fotoğraflar eklemek istersen aynı satıra img ekle -->
     </div>
   </div>
+  
 
-  <div class="surprise-box">
-    <h2>Doğruyu Yaz, Sürprizi Kap:</h2>
-    <p id="questionText" style="font-weight: bold; font-size: 1.1em;"></p>
+  <div class="alt-kutular">
+    
+    <div class="duygu-kutusu" >
+    <h3>Özümden Gelenler</h3>
+    <textarea id="dailyMood" rows="5" placeholder="Aklından geçenleri buraya yaz.." ></textarea>
+    <button onclick="saveMood()" style="margin-top: 10px;">Kaydet</button>
+    
+  </div><div class="surprise-box">
+    <h3>Doğruyu Yaz, Sürprizi Kap</h3>
+    <p id="questionText" style=" font-size: 1.1em;" ></p>
     <input type="text" id="codeInput" placeholder="Cevabı buraya yaz..." autocomplete="off" />
     <button onclick="checkCode()">Göster</button>
     <p id="secretMessage"></p>
   </div>
+</div>
 
   <script>
     const questions = [
@@ -158,6 +227,139 @@
     
   </script>
 
+
+
   <script src="script.js"></script>
+</div>
+
+<script>
+  // Firebase config (senin verdiklerinle)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBFcAWw9n-SlMnKe34jGoitXh2H4LA6ndQ",
+    authDomain: "ozgenotlar.firebaseapp.com",
+    projectId: "ozgenotlar",
+    storageBucket: "ozgenotlar.firebasestorage.app",
+    messagingSenderId: "1009688346033",
+    appId: "1:1009688346033:web:780dcadbbe90d9ba5a1190",
+    measurementId: "G-1Q2FHBHKBS"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const textarea = document.getElementById("dailyMood");
+  const savedDiv = document.getElementById("savedMood");
+
+  function saveMood() {
+    const text = textarea.value.trim();
+    if (!text) {
+      alert("Lütfen bir şeyler yaz!");
+      return;
+    }
+
+    db.collection("duygular").add({
+      text: text,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+    alert("Kaydedildi 🎈");
+    textarea.value = "";
+  })
+
+    .catch(err => alert("Hata: " + err));
+  }
+</script>
+
+<br>
+<br>
+
+
+<div style="text-align: center;">
+  <h2 class="rainbow-text" style="margin-bottom:4px;">Kıvrıla Kıvrıla Gel Bana</h2><br>
+  <button id="startBtn" style="margin-bottom:5px;">Oyunu Başlat</button>
+  <div id="snake-game-container"></div>
+</div>
+
+
+<script>
+  const container = document.getElementById("snake-game-container");
+  const gridSize = 20;
+  const gridCount = 16;
+
+  let snake = [{ x: 8, y: 8 }];
+  let direction = { x: 1, y: 0 }; // Sağa doğru başla
+  let food = { x: 5, y: 5 };
+  let gameInterval;
+
+  function draw() {
+    container.innerHTML = "";
+
+    snake.forEach(segment => {
+      const el = document.createElement("div");
+      el.classList.add("snake");
+      el.style.left = segment.x * gridSize + "px";
+      el.style.top = segment.y * gridSize + "px";
+      container.appendChild(el);
+    });
+
+    const foodEl = document.createElement("div");
+    foodEl.classList.add("food");
+    foodEl.style.left = food.x * gridSize + "px";
+    foodEl.style.top = food.y * gridSize + "px";
+    container.appendChild(foodEl);
+  }
+
+  function placeFood() {
+    food = {
+      x: Math.floor(Math.random() * gridCount),
+      y: Math.floor(Math.random() * gridCount),
+    };
+  }
+
+  function move() {
+    const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+    if (head.x < 0 || head.y < 0 || head.x >= gridCount || head.y >= gridCount ||
+        snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+      clearInterval(gameInterval);
+      alert("Kıvrıla kıvrıla daha iyi gelmen lazım bana😎!");
+      return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+      placeFood();
+    } else {
+      snake.pop();
+    }
+
+    draw();
+  }
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    snake = [{ x: 8, y: 8 }];
+    direction = { x: 1, y: 0 };
+    placeFood();
+    draw();
+    clearInterval(gameInterval);
+    gameInterval = setInterval(move, 200);
+  });
+
+  document.addEventListener("keydown", e => {
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    e.preventDefault(); // Sayfa kaymasını engeller
+  }
+
+  if (e.key === "ArrowUp" && direction.y !== 1) direction = { x: 0, y: -1 };
+  if (e.key === "ArrowDown" && direction.y !== -1) direction = { x: 0, y: 1 };
+  if (e.key === "ArrowLeft" && direction.x !== 1) direction = { x: -1, y: 0 };
+  if (e.key === "ArrowRight" && direction.x !== -1) direction = { x: 1, y: 0 };
+});
+
+</script>
+
+
+
 </body>
 </html>
