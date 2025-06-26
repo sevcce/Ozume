@@ -15,7 +15,7 @@ body {
   }
   
   #messageBox {
-    margin: 30px auto;
+    margin: 20px auto;
     padding: 20px;
     width: 60%;
     background: #fff;
@@ -69,17 +69,11 @@ body {
     }
   }
 
-  .surprise-box {
-    margin-top: 30px;
-    padding: 20px;
-    text-align: center;
-    background-color: #fff0f5;
-    border-radius: 12px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  .surprise-box h2 {
+    color: #444343;
   }
+  
+
   
   .surprise-box input {
     padding: 10px;
@@ -98,3 +92,272 @@ body {
     border-radius: 8px;
     cursor: pointer;
   }
+  .surprise-box button:hover {
+    background-color: #8c8520;
+  }
+  
+
+ 
+
+/* Sadece Duygu Kutusu İçin Stil */
+
+
+/* Başlık */
+.duygu-kutusu h3 {
+  font-size: 16px;
+  color: #2f4f3f;
+  text-align: center;
+  margin-bottom: 14px;
+  font-weight: normal;
+}
+
+.duygu-kutusu textarea {
+  width: 100%;
+  height: 65px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #bcd9c7;
+  border-radius: 12px;
+  background-color: #f9fdfb;
+  color: #2e463a;
+  resize: none;
+  box-sizing: border-box; /* Bu çok önemli */
+  transition: border-color 0.2s ease;
+}
+
+.duygu-kutusu textarea:focus {
+  border-color: #8fc1a9;
+  outline: none;
+}
+
+/* Kaydet Butonu */
+.duygu-kutusu button {
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px;
+  background-color: #237e40;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.duygu-kutusu button:hover {
+  background-color: #0e6c22;
+}
+
+.alt-kutular {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  max-width: 900px;
+  margin: 40px auto;
+  align-items: flex-start; /* Üst hizalama */
+}
+
+
+.duygu-kutusu,
+.surprise-box {
+  min-height: 320px;
+  flex: 0 0 47%;
+  box-sizing: border-box;
+  background: #fefefe;
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-self: stretch;
+}
+
+.duygu-kutusu {
+  background: #bdddb5;
+  border: 1px solid #cce3d5;
+}
+
+.surprise-box {
+  background: #f4f1c9;
+  border: 1px solid #e5deb3;
+}
+
+
+
+/* Ortak stiller */
+.duygu-kutusu textarea,
+.surprise-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.duygu-kutusu button,
+.surprise-box button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+}
+
+
+.duygu-kutusu h3,
+.surprise-box h3 {
+  font-size: 18px;
+  color: #2f4f3f;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .alt-kutular {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .duygu-kutusu,
+  .surprise-box {
+    width: 90%;
+    flex: unset;
+  }
+}
+
+
+
+/* CSS: Bulut stili ve animasyonu */
+.clouds {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  pointer-events: none; /* Sayfa içeriğini engellemesin */
+  overflow: visible;
+  z-index: 10;
+  background: linear-gradient(to bottom, #afa1ba 0%, transparent 100%);
+}
+
+.cloud {
+  position: absolute;
+  background: #fff;
+  background: radial-gradient(ellipse at center, #fff 60%, #d1d1d1 100%);
+  border-radius: 50%;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+  animation-timing-function: linear;
+  will-change: transform;
+}
+
+/* Bulutların boyut ve konumu */
+.cloud1 {
+  width: 120px;
+  height: 70px;
+  top: 40px;
+  left: -150px;
+  animation: moveClouds 60s linear infinite;
+}
+
+.cloud2 {
+  width: 180px;
+  height: 100px;
+  top: 20px;
+  left: -200px;
+  opacity: 0.5;
+  animation: moveClouds 90s linear infinite;
+  animation-delay: 20s;
+}
+
+.cloud3 {
+  width: 100px;
+  height: 60px;
+  top: 80px;
+  left: -100px;
+  opacity: 0.6;
+  animation: moveClouds 70s linear infinite;
+  animation-delay: 10s;
+}
+
+@keyframes moveClouds {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(120vw);
+  }
+}
+
+#snake-game-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 20px auto;
+  background-color: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.snake {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: #971ad5;
+  border-radius: 4px;
+}
+
+.food {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: #ebee3f;
+  border-radius: 50%;
+}
+
+#snake-game-container {
+  position: relative;
+  width: 320px; /* Kare kalır, ekran boyutuna göre ayarlanır */
+  height: 320px;
+  max-width: 400px;
+  max-height: 400px;
+  margin: 20px auto;
+  background-color: #000;
+  border-radius: 12px;
+  touch-action: none;
+}
+
+.rainbow-text {
+  background: linear-gradient(
+    to right,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  font-size: 2.5em;
+  font-family: 'Georgia', serif;
+  text-align: center;
+  display: inline-block;
+}
+
+
+
+
+
+
+
+
