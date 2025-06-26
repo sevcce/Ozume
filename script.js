@@ -18,7 +18,8 @@ const messages = [
     "'Ruhum, yolculuğum seninle devam edecek.'",
     "'Seninle dolaşacağım ve ıssızlığına yükseleceğim.'",
     "Selam Yuvam",
-    "Home is wherever I'm with you"
+    "Home is wherever I'm with you",
+    "Oh sevgilim❤️"
     
 
 
@@ -50,3 +51,39 @@ const messages = [
       }, 4000);
     }
   }
+
+  let startX = null;
+let startY = null;
+
+container.addEventListener("touchstart", e => {
+  const touch = e.touches[0];
+  startX = touch.clientX;
+  startY = touch.clientY;
+});
+
+container.addEventListener("touchmove", e => {
+  if (!startX || !startY) return;
+
+  const touch = e.touches[0];
+  const diffX = touch.clientX - startX;
+  const diffY = touch.clientY - startY;
+
+  if (Math.abs(diffX) > Math.abs(diffY)) {
+    // yatay swipe
+    if (diffX > 0 && direction.x !== -1) direction = { x: 1, y: 0 };
+    else if (diffX < 0 && direction.x !== 1) direction = { x: -1, y: 0 };
+  } else {
+    // dikey swipe
+    if (diffY > 0 && direction.y !== -1) direction = { x: 0, y: 1 };
+    else if (diffY < 0 && direction.y !== 1) direction = { x: 0, y: -1 };
+  }
+
+  
+});
+
+container.addEventListener("touchend", () => {
+  startX = null;
+  startY = null;
+});
+
+ 
