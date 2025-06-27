@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Özümden Gelen Notlar ve Cevaplar</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background: #f9f7f1;
+      color: #4b3b2b;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: #3b6e3b;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px #a9c1a9;
+    }
+
+    #notesContainer {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .note {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      padding: 20px 25px;
+      margin-bottom: 20px;
+      transition: box-shadow 0.3s ease;
+    }
+    .note:hover {
+      box-shadow: 0 6px 15px rgba(0,0,0,0.18);
+    }
+
+    .note p {
+      font-size: 1.1em;
+      margin: 0 0 15px 0;
+      line-height: 1.5;
+    }
+
+    .reply-input {
+      width: 80%;
+      padding: 10px 12px;
+      border: 2px solid #3b6e3b;
+      border-radius: 8px;
+      font-size: 1em;
+      color: #333;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .reply-input:focus {
+      border-color: #5aba5a;
+      box-shadow: 0 0 8px #a3dca3;
+    }
+
+    .reply-btn {
+      background-color: #3b6e3b;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      margin-left: 10px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .reply-btn:hover {
+      background-color: #5aba5a;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .replies {
+      margin-top: 15px;
+      padding-left: 15px;
+      border-left: 3px solid #a3dca3;
+    }
+    .reply {
+      background: #e7f0e7;
+      margin-bottom: 8px;
+      padding: 8px 15px;
+      border-radius: 8px;
+      color: #2e4d2e;
+      font-size: 0.95em;
+      box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .reply strong {
+      font-weight: 600;
+      color: #3b6e3b;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .reply-input {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .reply-btn {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Özümden Gelenler ve Cevaplar</h1>
+  <div id="notesContainer"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBFcAWw9n-SlMnKe34jGoitXh2H4LA6ndQ",
+      authDomain: "ozgenotlar.firebaseapp.com",
+      projectId: "ozgenotlar",
+      storageBucket: "ozgenotlar.firebasestorage.app",
+      messagingSenderId: "1009688346033",
+      appId: "1:1009688346033:web:780dcadbbe90d9ba5a1190",
+      measurementId: "G-1Q2FHBHKBS"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const notesContainer = document.getElementById("notesContainer");
+
+    function loadNotes() {
+      db.collection("duygular").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+        notesContainer.innerHTML = "";
+        snapshot.forEach(doc => {
+          const note = doc.data();
+          const noteId = doc.id;
+
+          const noteDiv = document.createElement("div");
+          noteDiv.classList.add("note");
+
+          const noteText = document.createElement("p");
+noteText.textContent = note.text;
+noteText.style.marginBottom = "3px";  // Alt boşluğu küçülttük
+noteDiv.appendChild(noteText);
+
+const noteDate = note.timestamp?.toDate?.();
+let timeStr = "";
+if (noteDate) {
+  timeStr = new Date(noteDate).toLocaleString('tr-TR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+  const dateElem = document.createElement("div");
+  dateElem.textContent = timeStr;
+  dateElem.style.fontSize = "0.85em";
+  dateElem.style.color = "#999";  
+  dateElem.style.marginTop = "5px";   // Tarihin üstündeki boşluk (not metninden)
+  dateElem.style.marginBottom = "17px"; 
+  dateElem.style.fontStyle = "normal"; 
+  noteDiv.appendChild(dateElem);
+}
+          
+
+
+          const replyInput = document.createElement("input");
+          replyInput.type = "text";
+          replyInput.placeholder = "Cevabını yaz...";
+          replyInput.className = "reply-input";
+          noteDiv.appendChild(replyInput);
+
+          const replyBtn = document.createElement("button");
+          replyBtn.textContent = "Gönder";
+          replyBtn.className = "reply-btn";
+          noteDiv.appendChild(replyBtn);
+
+          const repliesList = document.createElement("div");
+          repliesList.className = "replies";
+          noteDiv.appendChild(repliesList);
+
+          // Cevapları göster
+          db.collection("duygular").doc(noteId).collection("cevaplar")
+            .orderBy("timestamp", "asc")
+            .onSnapshot(replySnapshot => {
+              repliesList.innerHTML = "";
+              replySnapshot.forEach(replyDoc => {
+                const reply = replyDoc.data();
+                const p = document.createElement("p");
+                p.className = "reply";
+                p.innerHTML = `<strong>${reply.sender}:</strong> ${reply.text}`;
+                repliesList.appendChild(p);
+              });
+            });
+
+          replyBtn.onclick = () => {
+            const replyText = replyInput.value.trim();
+            if (!replyText) {
+              alert("Lütfen cevap yaz!");
+              return;
+            }
+            db.collection("duygular").doc(noteId).collection("cevaplar").add({
+              text: replyText,
+              sender: "sevcce",
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+              replyInput.value = "";
+            }).catch(err => alert("Hata: " + err));
+          };
+
+          notesContainer.appendChild(noteDiv);
+        });
+      });
+    }
+
+    loadNotes();
+  </script>
+</body>
+</html>
