@@ -86,4 +86,15 @@ container.addEventListener("touchend", () => {
   startY = null;
 });
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("snake-game-container");
+  
+  // diğer kodlar burada, örneğin:
+  container.addEventListener("touchstart", ...);
+  // ve diğer event listenerlar
+
+  // oyun fonksiyonları ve eventler burada olacak
+});
+
  
