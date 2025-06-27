@@ -112,6 +112,20 @@
 </head>
 <body>
   <h1>Özümden Gelenler ve Cevaplar</h1>
+
+
+  <div style="text-align: center; margin-bottom: 20px;">
+    <select id="senderName" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em;">
+      <option value="" disabled selected>Kimden gelsin bu cevap?</option>
+      <option value="sevcce">sevcce</option>
+      <option value="özce">özce</option>
+    </select>
+    <p style="font-size: 0.9em; color: #777;">cevabı yazan parmaklarını sev, ismini de unutma</p>
+  </div>
+  
+
+
+  
   <div id="notesContainer"></div>
 
   <script>
@@ -193,20 +207,34 @@ if (noteDate) {
               });
             });
 
-          replyBtn.onclick = () => {
-            const replyText = replyInput.value.trim();
-            if (!replyText) {
-              alert("Lütfen cevap yaz!");
-              return;
-            }
-            db.collection("duygular").doc(noteId).collection("cevaplar").add({
-              text: replyText,
-              sender: "sevcce",
-              timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-              replyInput.value = "";
-            }).catch(err => alert("Hata: " + err));
-          };
+
+            // buraları degiştirmen gerekebilir unutma..
+
+         replyBtn.onclick = () => {
+  const replyText = replyInput.value.trim();
+  const senderName = document.getElementById("senderName").value.trim();
+
+  if (!replyText) {
+    alert("Lütfen cevap yaz!");
+    return;
+  }
+
+  if (!senderName) {
+    alert("cevabı yazan parmaklarını sevemezsin, çünkü ismini unuttun😄");
+    return;
+  }
+
+  // Buraları degiştirmen gerekebilirr. unutma!
+
+  db.collection("duygular").doc(noteId).collection("cevaplar").add({
+    text: replyText,
+    sender: senderName,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    replyInput.value = "";
+  }).catch(err => alert("Hata: " + err));
+};
+
 
           notesContainer.appendChild(noteDiv);
         });
