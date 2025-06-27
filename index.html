@@ -21,8 +21,6 @@
 <br>
 <br>
 
-
-
   <div style="text-align: center; font-family: Georgia, serif; color: #5a3e36; margin-top: 40px;">
     <h2>Özüme kavuşalı...</h2>
     <div id="counter" style="font-size: 1.3em;"></div>
@@ -151,8 +149,15 @@
     
     <div class="duygu-kutusu" >
     <h3>Özümden Gelenler</h3>
+
+    
+    
     <textarea id="dailyMood" rows="5" placeholder="Aklından geçenleri buraya yaz.." ></textarea>
     <button onclick="saveMood()" style="margin-top: 10px;">Kaydet</button>
+
+    <p style="text-align:center; margin-top: 10px;">
+      <a href="cevaplar.html" target="_blank" style="color:#0e6c22; font-size: 14px;">Özümden gelenlere Sevcce cevaplar burada🫂💬</a>
+    </p>
     
   </div><div class="surprise-box">
     <h3>Doğruyu Yaz, Sürprizi Kap</h3>
@@ -258,9 +263,11 @@
     }
 
     db.collection("duygular").add({
-      text: text,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    })
+  sender: "sevcan", // burada kim yazıyorsa o
+  text: text,
+  timestamp: firebase.firestore.FieldValue.serverTimestamp()
+})
+
     .then(() => {
     alert("Kaydedildi 🎈");
     textarea.value = "";
@@ -268,6 +275,8 @@
 
     .catch(err => alert("Hata: " + err));
   }
+
+  
 </script>
 
 <br>
@@ -282,12 +291,14 @@
 
 
 <script>
+  document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("snake-game-container");
+
   const gridSize = 20;
   const gridCount = 16;
 
   let snake = [{ x: 8, y: 8 }];
-  let direction = { x: 1, y: 0 }; // Sağa doğru başla
+  let direction = { x: 1, y: 0 };
   let food = { x: 5, y: 5 };
   let gameInterval;
 
@@ -319,8 +330,10 @@
   function move() {
     const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-    if (head.x < 0 || head.y < 0 || head.x >= gridCount || head.y >= gridCount ||
-        snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+    if (
+      head.x < 0 || head.y < 0 || head.x >= gridCount || head.y >= gridCount ||
+      snake.some(seg => seg.x === head.x && seg.y === head.y)
+    ) {
       clearInterval(gameInterval);
       alert("Kıvrıla kıvrıla daha iyi gelmen lazım bana😎!");
       return;
@@ -337,6 +350,7 @@
     draw();
   }
 
+  // Oyun başlatma butonu
   document.getElementById("startBtn").addEventListener("click", () => {
     snake = [{ x: 8, y: 8 }];
     direction = { x: 1, y: 0 };
@@ -346,18 +360,57 @@
     gameInterval = setInterval(move, 200);
   });
 
+  // Klavye ok tuşları kontrolü
   document.addEventListener("keydown", e => {
-  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-    e.preventDefault(); // Sayfa kaymasını engeller
-  }
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+      e.preventDefault(); // sayfa kaymasını engelle
+    }
 
-  if (e.key === "ArrowUp" && direction.y !== 1) direction = { x: 0, y: -1 };
-  if (e.key === "ArrowDown" && direction.y !== -1) direction = { x: 0, y: 1 };
-  if (e.key === "ArrowLeft" && direction.x !== 1) direction = { x: -1, y: 0 };
-  if (e.key === "ArrowRight" && direction.x !== -1) direction = { x: 1, y: 0 };
+    if (e.key === "ArrowUp" && direction.y !== 1) direction = { x: 0, y: -1 };
+    if (e.key === "ArrowDown" && direction.y !== -1) direction = { x: 0, y: 1 };
+    if (e.key === "ArrowLeft" && direction.x !== 1) direction = { x: -1, y: 0 };
+    if (e.key === "ArrowRight" && direction.x !== -1) direction = { x: 1, y: 0 };
+  });
+
+  // Dokunmatik hareket kontrolü (swipe)
+  let startX = null;
+  let startY = null;
+
+  container.addEventListener("touchstart", e => {
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+  });
+
+  container.addEventListener("touchmove", e => {
+    if (!startX || !startY) return;
+
+    const touch = e.touches[0];
+    const diffX = touch.clientX - startX;
+    const diffY = touch.clientY - startY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      // yatay swipe
+      if (diffX > 0 && direction.x !== -1) direction = { x: 1, y: 0 };
+      else if (diffX < 0 && direction.x !== 1) direction = { x: -1, y: 0 };
+    } else {
+      // dikey swipe
+      if (diffY > 0 && direction.y !== -1) direction = { x: 0, y: 1 };
+      else if (diffY < 0 && direction.y !== 1) direction = { x: 0, y: -1 };
+    }
+
+    e.preventDefault(); // sayfa kaymasını engelle
+  }, { passive: false });
+
+  container.addEventListener("touchend", () => {
+    startX = null;
+    startY = null;
+  });
 });
 
+
 </script>
+
 
 
 
