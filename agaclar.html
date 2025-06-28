@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ağaçlar Sayfası</title>
+  <style>
+    .agac-daire-container {
+  width: 90vw;
+  height: 90vw;
+  max-width: 400px;
+  max-height: 400px;
+  margin: 30px auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.agac-merkez-yazi {
+  position: static; /* ya da kaldır */
+  font-weight: bold;
+  font-size: 18px;
+  color: #1c682d;
+  text-align: center;
+  
+  
+  
+}
+
+    #lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #lightbox-img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #000;
+    }
+    .back-button {
+      margin-top: 30px;
+      display: block;
+      text-align: center;
+    }
+  </style>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <div class="agac-daire-container">
+    <div class="agac-merkez-yazi">"Gözlerimin Hayran Kalacağı<br>Her Ağaçta Seni Göreceğim"</div>
+  </div>
+
+  <div id="lightbox">
+    <img id="lightbox-img" src="" onclick="closeFullscreen()" />
+  </div>
+
+  
+
+  <script>
+    const container = document.querySelector('.agac-daire-container');
+    const totalImages = 25;
+    const radius = 160;
+
+    for (let i = 1; i <= totalImages; i++) {
+      const angle = (i / totalImages) * 2 * Math.PI;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+
+      const img = document.createElement('img');
+      img.src = `agaclar/agaclar${i}.jpg`;
+      img.alt = `Ağaç ${i}`;
+      img.style.position = 'absolute';
+      
+      const size = window.innerWidth < 500 ? window.innerWidth * 0.12 : 50;
+
+img.style.width = `${size}px`;
+img.style.height = `${size}px`;
+img.style.borderRadius = '50%';
+img.style.left = `${200 + x - size / 2}px`;
+img.style.top = `${200 + y - size / 2}px`;
+img.style.cursor = 'pointer';
+img.onclick = () => openFullscreen(img.src);
+
+
+
+      container.appendChild(img);
+    }
+
+    function openFullscreen(src) {
+      const lightbox = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      img.src = src;
+      lightbox.style.display = 'flex';
+
+      if (window.innerWidth < 768) {
+        if (lightbox.requestFullscreen) {
+          lightbox.requestFullscreen();
+        } else if (lightbox.webkitRequestFullscreen) {
+          lightbox.webkitRequestFullscreen();
+        } else if (lightbox.msRequestFullscreen) {
+          lightbox.msRequestFullscreen();
+        }
+      }
+    }
+
+    function closeFullscreen() {
+      const lightbox = document.getElementById('lightbox');
+      lightbox.style.display = 'none';
+
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else if (document.webkitFullscreenElement) {
+        document.webkitExitFullscreen();
+      } else if (document.msFullscreenElement) {
+        document.msExitFullscreen();
+      }
+    }
+  </script>
+
+</body>
+</html>
