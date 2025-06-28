@@ -97,42 +97,43 @@ requestAnimationFrame(loop);
 
 
 
-let startX = null;
-let startY = null;
-
-canvas.addEventListener("touchstart", e => {
-  const touch = e.touches[0];
-  startX = touch.clientX;
-  startY = touch.clientY;
-});
-
-canvas.addEventListener("touchmove", e => {
-  if (!startX || !startY) return;
-
-  const touch = e.touches[0];
-  const diffX = touch.clientX - startX;
-  const diffY = touch.clientY - startY;
-
-  if (Math.abs(diffX) > Math.abs(diffY)) {
-    // yatay swipe
-    if (diffX > 0 && snake.dx === 0) {
-      snake.dx = grid;
-      snake.dy = 0;
-    } else if (diffX < 0 && snake.dx === 0) {
-      snake.dx = -grid;
-      snake.dy = 0;
+  let startX = null;
+  let startY = null;
+  
+  canvas.addEventListener("touchstart", e => {
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+  });
+  
+  canvas.addEventListener("touchend", e => {
+    if (!startX || !startY) return;
+  
+    const touch = e.changedTouches[0];
+    const diffX = touch.clientX - startX;
+    const diffY = touch.clientY - startY;
+  
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      // yatay swipe
+      if (diffX > 30 && snake.dx === 0) {
+        snake.dx = grid;
+        snake.dy = 0;
+      } else if (diffX < -30 && snake.dx === 0) {
+        snake.dx = -grid;
+        snake.dy = 0;
+      }
+    } else {
+      // dikey swipe
+      if (diffY > 30 && snake.dy === 0) {
+        snake.dy = grid;
+        snake.dx = 0;
+      } else if (diffY < -30 && snake.dy === 0) {
+        snake.dy = -grid;
+        snake.dx = 0;
+      }
     }
-  } else {
-    // dikey swipe
-    if (diffY > 0 && snake.dy === 0) {
-      snake.dy = grid;
-      snake.dx = 0;
-    } else if (diffY < 0 && snake.dy === 0) {
-      snake.dy = -grid;
-      snake.dx = 0;
-    }
-  }
-
-  startX = null;
-  startY = null;
-});
+  
+    startX = null;
+    startY = null;
+  });
+  
