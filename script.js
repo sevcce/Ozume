@@ -52,94 +52,20 @@ const messages = [
     }
   }
 
-  let startX = null;
-let startY = null;
-
-container.addEventListener("touchstart", e => {
-  const touch = e.touches[0];
-  startX = touch.clientX;
-  startY = touch.clientY;
-});
-
-container.addEventListener("touchmove", e => {
-  if (!startX || !startY) return;
-
-  const touch = e.touches[0];
-  const diffX = touch.clientX - startX;
-  const diffY = touch.clientY - startY;
-
-  if (Math.abs(diffX) > Math.abs(diffY)) {
-    // yatay swipe
-    if (diffX > 0 && direction.x !== -1) direction = { x: 1, y: 0 };
-    else if (diffX < 0 && direction.x !== 1) direction = { x: -1, y: 0 };
-  } else {
-    // dikey swipe
-    if (diffY > 0 && direction.y !== -1) direction = { x: 0, y: 1 };
-    else if (diffY < 0 && direction.y !== 1) direction = { x: 0, y: -1 };
-  }
-
   
-});
-
-container.addEventListener("touchend", () => {
-  startX = null;
-  startY = null;
-});
-
-let gameInterval;
-let snake;
-let direction;
-let food;
-
-document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("snake-game-container");
-  if (!container) return;
-
-  let startX = null;
-  let startY = null;
-
-  container.addEventListener("touchstart", e => {
-    const touch = e.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
-  });
-
-  container.addEventListener("touchmove", e => {
-    if (!startX || !startY) return;
-
-    const touch = e.touches[0];
-    const diffX = touch.clientX - startX;
-    const diffY = touch.clientY - startY;
-
-    // örnek yön ayarı
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      if (diffX > 0) console.log("sağ");
-      else console.log("sol");
-    } else {
-      if (diffY > 0) console.log("aşağı");
-      else console.log("yukarı");
-    }
-
-    startX = null;
-    startY = null;
-  });
-});
-
-  
-
-
   function openAgaclar() {
     window.open('agaclar.html', '_blank');
   }
 
-  function toggleSnakeGame() {
-    window.open("snake.html", "SnakeGame", "width=450,height=500");
-  }
+
 
   function toggleMenu() {
     const menu = document.querySelector('.menu');
     menu.classList.toggle('show');
   }
+
+  
+  
 
 
 
