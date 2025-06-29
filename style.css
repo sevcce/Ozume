@@ -335,7 +335,7 @@ body {
   background-color: #6a4a86;
   height: 52px;
   padding: 0;
-  z-index: 999;
+  z-index: 10000;
   overflow: visible;
 }
 
