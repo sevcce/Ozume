@@ -1,7 +1,7 @@
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
-const grid = 20;
+const grid = 40;
 let count = 0;
 let snake = {
   x: 160,
@@ -19,6 +19,14 @@ let apple = {
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
+function getMaxGridXY() {
+  return {
+    maxX: Math.floor(canvas.width / grid),
+    maxY: Math.floor(canvas.height / grid)
+  };
+}
+
 
 function loop() {
   requestAnimationFrame(loop);
@@ -47,9 +55,11 @@ function loop() {
 
     if (cell.x === apple.x && cell.y === apple.y) {
       snake.maxCells++;
-      apple.x = getRandomInt(0, 20) * grid;
-      apple.y = getRandomInt(0, 20) * grid;
+      const { maxX, maxY } = getMaxGridXY();
+      apple.x = getRandomInt(0, maxX) * grid;
+      apple.y = getRandomInt(0, maxY) * grid;
     }
+    
 
     for (let i = index + 1; i < snake.cells.length; i++) {
       if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
@@ -92,8 +102,8 @@ requestAnimationFrame(loop);
 
 
   document.addEventListener("DOMContentLoaded", () => {
-    canvas.width = Math.min(window.innerWidth, 400);
-    canvas.height = canvas.width;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     
     let startX = null;
     let startY = null;
