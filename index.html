@@ -14,12 +14,16 @@
 
 <body>
   <div class="navbar">
-    <img src="WhatsApp Image 2025-06-11 at 16.47.58 2.jpeg" alt="Logo" class="logo" />
-    <span class="site-title">SevÖz</span>
+    <div class="navbar-left">
+      <img src="WhatsApp Image 2025-06-11 at 16.47.58 2.jpeg" alt="Logo" class="logo" />
+      <span class="site-title">SevÖz</span>
+    </div>
 
-    <div class="menu">
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  
+    <div class="menu" id="navbarMenu">
       <button onclick="alert('Anasayfa')">Anasayfa</button>
-
+  
       <div class="dropdown">
         <button>Menü</button>
         <div class="dropdown-content">
@@ -28,22 +32,23 @@
           <button onclick="openAgaclar()">Ağaçlarımız</button>
         </div>
       </div>
+  
       <div class="dropdown">
         <button>Eğlence</button>
         <div class="dropdown-content">
-          <button type="button" onclick="toggleSnakeGame()">Kıvrıla Da Gel Bana</button>
-          <button>Mandalalandınız!</button>
+          <button type="button" onclick="openSnakeGame()">Kıvrıla Da Gel Bana</button>
+          <button onclick="alert('Mandalalandınız!')">Mandalalandınız!</button>
         </div>
       </div>
-
+  
       <button onclick="alert('İletişim')">İletişim</button>
     </div>
   </div>
-
+  
 
 
   <div style="text-align: center; font-family: Georgia, serif; color: #5a3e36; margin-top: 40px;">
-    <h2>Özüme kavuşalı...</h2>
+    <h2>Özüme kavuşalı🫂</h2>
     <div id="counter" style="font-size: 1.3em;"></div>
   </div>
 
@@ -78,7 +83,7 @@
   <div id="siteContent">
 
   <div class="container">
-    <h1>ÖZÜME🫂</h1>
+    
     <div id="messageBox">Seni çok seviyorum sevgilim❤️</div>
     <button onclick="showMessage()">Tıklasana</button>
     <br>
@@ -295,16 +300,18 @@
   
 </script>
 
-<script>
-  function toggleSnakeGame() {
-    window.open("snake.html", "SnakeGame", "width=450,height=500");
-  }
-</script>
+
 <script>
   function openSnakeGame() {
-    window.open("snake.html", "SnakeGame", "width=450,height=500");
+    const isMobile = window.innerWidth <= 768;
+
+    const w = isMobile ? Math.min(window.innerWidth - 20, 500) : 800;
+    const h = isMobile ? w + 50 : 850;
+
+    window.open("snake.html", "SnakeGame", `width=${w},height=${h},resizable=yes`);
   }
 </script>
+
 
 
 
