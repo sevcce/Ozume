@@ -10,6 +10,12 @@ body {
     margin: 0;
     padding: 1rem;
   }
+
+  body, html {
+    overflow: hidden;
+    touch-action: none;
+  }
+  
   
   
   canvas {
@@ -19,6 +25,7 @@ body {
     max-width: 400px;
     height: auto;
     aspect-ratio: 1;
+    touch-action: none;
   }
 
   .rainbow-text {
