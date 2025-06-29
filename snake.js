@@ -1,4 +1,4 @@
-const canvas = document.getElementById("game");
+const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
 const grid = 20;
@@ -91,49 +91,50 @@ document.addEventListener("keydown", e => {
 requestAnimationFrame(loop);
 
 
-  function openSnakeGame() {
-    window.open("snake.html", "SnakeGame", "width=450,height=500");
-  }
-
-
-
-  let startX = null;
-  let startY = null;
+  document.addEventListener("DOMContentLoaded", () => {
+    canvas.width = Math.min(window.innerWidth, 400);
+    canvas.height = canvas.width;
+    
+    let startX = null;
+    let startY = null;
   
-  canvas.addEventListener("touchstart", e => {
-    const touch = e.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
+    canvas.addEventListener("touchstart", e => {
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      e.preventDefault();
+    }, { passive: false });
+  
+    canvas.addEventListener("touchmove", e => {
+      if (!startX || !startY) return;
+  
+      const touch = e.touches[0];
+      const diffX = touch.clientX - startX;
+      const diffY = touch.clientY - startY;
+  
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0 && snake.dx === 0) {
+          snake.dx = grid;
+          snake.dy = 0;
+        } else if (diffX < 0 && snake.dx === 0) {
+          snake.dx = -grid;
+          snake.dy = 0;
+        }
+      } else {
+        if (diffY > 0 && snake.dy === 0) {
+          snake.dy = grid;
+          snake.dx = 0;
+        } else if (diffY < 0 && snake.dy === 0) {
+          snake.dy = -grid;
+          snake.dx = 0;
+        }
+      }
+  
+      e.preventDefault();
+      startX = null;
+      startY = null;
+    }, { passive: false });
   });
   
-  canvas.addEventListener("touchend", e => {
-    if (!startX || !startY) return;
   
-    const touch = e.changedTouches[0];
-    const diffX = touch.clientX - startX;
-    const diffY = touch.clientY - startY;
-  
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      // yatay swipe
-      if (diffX > 30 && snake.dx === 0) {
-        snake.dx = grid;
-        snake.dy = 0;
-      } else if (diffX < -30 && snake.dx === 0) {
-        snake.dx = -grid;
-        snake.dy = 0;
-      }
-    } else {
-      // dikey swipe
-      if (diffY > 30 && snake.dy === 0) {
-        snake.dy = grid;
-        snake.dx = 0;
-      } else if (diffY < -30 && snake.dy === 0) {
-        snake.dy = -grid;
-        snake.dx = 0;
-      }
-    }
-  
-    startX = null;
-    startY = null;
-  });
   
