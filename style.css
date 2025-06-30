@@ -1,3 +1,6 @@
+
+
+
 body {
     font-family: 'Segoe UI', sans-serif;
     background: #afa1ba;
@@ -324,155 +327,48 @@ body {
   }
 }
 
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content:flex-start;
-  background-color: #6a4a86;
-  height: 52px;
-  padding: 0;
-  z-index: 10000;
-  overflow: visible;
-}
-
-.logo {
-  height: 100%;
-  max-height: 52px; /* navbar yüksekliği kadar */
-  width: auto;
-  object-fit: contain;
-  margin: 0;
-  padding: 0;
-}
-.navbar-left {
-  display: flex;
-  align-items: center;
-  margin-left: 0;
-  padding-left: 0; /* biraz iç boşluk istersen */
-}
-
-.site-title {
-  color: orange;
-  font-size: 1.4em;
-  margin-left: 10px;
-  margin-right: 30px;
-  font-weight: 700;
-}
-
-@media (max-width: 600px) {
-  .menu {
-    flex-direction: column;
-    width: 100%;
-    background-color: #6a4a86;
-    padding: 10px 0;
-  }
-}
-
-
-
-.menu {
-  display: flex;
-  align-items: center;  /* dikey ortalama */
-  height: 100%;          /* navbar’ın yüksekliği kadar */
-  gap: 8px;
-}
-
-
-.menu button {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-
-}
-
-.menu button:hover {
-  background-color: #8c6db1;
-}
-
-/* Dropdown Temel Stil */
-.dropdown {
-  position: relative;
-  display: inline-block;
-  margin: 10px;
-}
-
-.dropdown-content {
+.menu-toggle {
   display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #7d5aa3;
-  min-width: 160px;
-  border-radius: 6px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  z-index: 2000;
-}
-
-.dropdown-content button {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 8px 12px;
-  background: none;
-  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 1rem;
   color: white;
-  font-size: 14px;
 }
 
-.dropdown-content button:hover {
-  background-color: #9b7bc4;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-body {
-  padding-top: 52px;
-}
-
-/* Mobil Uyum */
-@media (max-width: 600px) {
-  .dropdown {
+@media (max-width: 768px) {
+  .menu-toggle {
     display: block;
-    width: 100%;
-    text-align: center;
   }
 
-  .dropdown-content {
-    position: static;
-    display: block;
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-item {
+    width: 100%;
+    position: relative;
+  }
+
+  .dropdown {
+    position: relative;
     width: 100%;
     box-shadow: none;
-    background-color: #7d5aa3;
-    margin-top: 5px;
+    border-radius: 0;
   }
 
-  .dropdown-content button {
-    font-size: 16px;
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #9b7bc4;
-  }
-
-  .dropdown:hover .dropdown-content {
-    display: block;
+  .dropdown a {
+    padding-left: 1.5rem;
   }
 }
 
-img.logo {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
+
 
 
 
