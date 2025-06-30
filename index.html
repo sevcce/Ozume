@@ -8,45 +8,130 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+
+    nav {
+      background-color: purple;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      height: 52px;
+      width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      padding: 0 20px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      margin-right: 40px;
+    }
+
+    .nav-logo img {
+      width: 36px;
+      height: 52px;
+      object-fit: cover;
+      margin-right: 5px;
+    }
+
+    .nav-logo span {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-item {
+      position: relative; /* Bu önemli! Dropdown'un yerini belirler */
+    }
+
+    .nav-links > .nav-item > a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      padding: 6px 12px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .nav-links > .nav-item > a:hover {
+      color: #e0caff;
+      border-color: #e0caff;
+      background-color: #905db9;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #d8b9f2;
+      min-width: 180px;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1;
+      padding: 5px 0;
+      text-align: left;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 16px;
+      color: purple;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .dropdown a:hover {
+      background-color: #f0e4ff;
+    }
+
+    .nav-item:hover .dropdown {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+    .nav-links {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .nav-item {
+      width: 100%;
+      position: relative;
+    }
+  
+    .dropdown {
+      position: relative;
+      width: 100%;
+      box-shadow: none;
+      border-radius: 0;
+    }
+  
+    .dropdown a {
+      padding-left: 1.5rem;
+    }
+  }
+  </style>
   
 </head>
-
-
 <body>
-  <div class="navbar">
-    <div class="navbar-left">
-      <img src="WhatsApp Image 2025-06-11 at 16.47.58 2.jpeg" alt="Logo" class="logo" />
-      <span class="site-title">SevÖz</span>
-    </div>
 
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  <nav id="navbar"></nav>
   
-    <div class="menu" id="navbarMenu">
-      <button onclick="alert('Anasayfa')">Anasayfa</button>
-  
-      <div class="dropdown">
-        <button>Menü</button>
-        <div class="dropdown-content">
-          <button onclick="alert('Özümden Gelenler')">Özümden Gelenler</button>
-          <button onclick="alert('Sürpriz Quiz')">Sürpriz Quiz</button>
-          <button onclick="openAgaclar()">Ağaçlarımız</button>
-        </div>
-      </div>
-  
-      <div class="dropdown">
-        <button>Eğlence</button>
-        <div class="dropdown-content">
-          <button type="button" onclick="openSnakeGame()">Kıvrıla Da Gel Bana</button>
-          <button onclick="alert('Mandalalandınız!')">Mandalalandınız!</button>
-        </div>
-      </div>
-  
-      <button onclick="alert('İletişim')">İletişim</button>
-    </div>
-  </div>
-  
-
-
   <div style="text-align: center; font-family: Georgia, serif; color: #5a3e36; margin-top: 40px;">
     <h2>Özüme kavuşalı🫂</h2>
     <div id="counter" style="font-size: 1.3em;"></div>
@@ -313,17 +398,75 @@
 </script>
 
 <script>
-  function toggleMenu() {
-    console.log("clicked");
-    const menu = document.getElementById("navbarMenu");
-    menu.classList.toggle("show");
-  }
+  document.addEventListener("DOMContentLoaded", function () {
+    const navbar = document.getElementById("navbar");
+
+    navbar.innerHTML = `
+      <div class="nav-logo">
+        <img src="WhatsApp Image 2025-06-11 at 16.47.58 2.jpeg" alt="Logo">
+        <span>SevÖz</span>
+      </div>
+      <div class="nav-links">
+        
+        <div class="nav-item">
+          <a href="#">Menü</a>
+          <div class="dropdown">
+            <a href="#">Özümden Gelenler</a>
+            <a href="#">Sürpriz Quiz</a>
+            <a href="#">Ağaçlarımız</a>
+          </div>
+        </div>
+        
+        <div class="nav-item">
+          <a href="#">Eğlence</a>
+          <div class="dropdown">
+            <a href="#">Kıvrıl Da Gel Bana</a>
+            <a href="#">Mandalalandınız</a>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a href="#">İletişim</a>
+          <div class="dropdown">
+            <a href="#">Öz Ruhu</a>
+            <a href="#">Sevc Ruhu</a>
+          </div>
+        </div>
+
+      </div>
+    `;
+    // Olayları bağlamak için bekleyelim
+setTimeout(() => {
+  const navItems = document.querySelectorAll(".nav-item");
+
+  navItems.forEach(item => {
+    item.addEventListener("click", function (e) {
+      // Tıklanan dışında açık dropdown varsa kapat
+      document.querySelectorAll(".dropdown").forEach(drop => {
+        if (drop !== item.querySelector(".dropdown")) {
+          drop.style.display = "none";
+        }
+      });
+
+      const dropdown = item.querySelector(".dropdown");
+      if (dropdown) {
+        // Toggle dropdown
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        e.stopPropagation(); // Diğer tıklamaları engelle
+      }
+    });
+  });
+
+  // Sayfa dışına tıklanınca kapat
+  document.addEventListener("click", function () {
+    document.querySelectorAll(".dropdown").forEach(drop => {
+      drop.style.display = "none";
+    });
+  });
+}, 100);
+
+  });
 </script>
-
-
-
-
-
 
 
 </body>
