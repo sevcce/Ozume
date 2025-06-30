@@ -57,16 +57,6 @@ const messages = [
     window.open('agaclar.html', '_blank');
   }
 
-  function toggleMenu() {
-    const menu = document.querySelector('.menu');
-    menu.classList.toggle('show');
-  }
-
-  
-  
-
-
-
   
 
 
