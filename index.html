@@ -157,18 +157,21 @@
     padding: 12px 20px;
   }
 
-  .nav-item:hover .dropdown {
-    display: none;
-  }
+  /* Mobil dropdown kontrolü için */
+.nav-item.open .dropdown {
+  display: block;
+}
 
-  .nav-item.open .dropdown {
-    display: block;
-  }
+/* Başlangıçta kapalı tutmak için */
+.dropdown {
+  display: none;
+}
 
-  .dropdown {
-    background-color: #b678d3;
-    border-radius: 0;
-  }
+/* Hamburger menü aktifken */
+#navLinks.active {
+  display: block;
+}
+
 }
 
   </style>
@@ -386,7 +389,7 @@
 
 
 
-  <script src="script.js"></script>
+  
 </div>
 
 <script>
@@ -453,11 +456,9 @@
         <span>SevÖz</span>
       </div>
 
-      <div class="menu-toggle" id="menuToggle">&#9776;</div> <!-- Hamburger ikon -->
+      <div class="menu-toggle" id="menuToggle">&#9776;</div>
 
       <div class="nav-links">
-
-        
         <div class="nav-item">
           <a href="#">Menü</a>
           <div class="dropdown">
@@ -466,11 +467,11 @@
             <a href="#">Ağaçlarımız</a>
           </div>
         </div>
-        
+
         <div class="nav-item">
           <a href="#">Eğlence</a>
           <div class="dropdown">
-            <a href="#">Kıvrıl Da Gel Bana</a>
+            <a href="#" onclick="openSnakeGame()">Kıvrıl Da Gel Bana</a>
             <a href="#">Mandalalandınız</a>
           </div>
         </div>
@@ -482,44 +483,62 @@
             <a href="#">Sevc Ruhu</a>
           </div>
         </div>
-
       </div>
     `;
-    // Olayları bağlamak için bekleyelim
-setTimeout(() => {
-  const navItems = document.querySelectorAll(".nav-item");
 
-  navItems.forEach(item => {
-    item.addEventListener("click", function (e) {
-      // Tıklanan dışında açık dropdown varsa kapat
-      document.querySelectorAll(".dropdown").forEach(drop => {
-        if (drop !== item.querySelector(".dropdown")) {
-          drop.style.display = "none";
+    // === Bu satırdan sonrası innerHTML'den sonra çalışmalı ===
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.querySelector(".nav-links");
+    const navItems = document.querySelectorAll(".nav-item");
+
+    // Hamburger menü aç/kapat
+    menuToggle.addEventListener("click", () => {
+      navLinks.classList.toggle("active");
+    });
+
+    // Nav item'lara tıklama işlemleri
+    navItems.forEach(item => {
+      const link = item.querySelector("a");
+      const dropdown = item.querySelector(".dropdown");
+
+      link.addEventListener("click", function (e) {
+        const isMobile = window.innerWidth <= 768;
+
+        if (dropdown) {
+          e.preventDefault();
+
+          if (isMobile) {
+            item.classList.toggle("open");
+          } else {
+            navItems.forEach(otherItem => {
+              if (otherItem !== item && otherItem.querySelector(".dropdown")) {
+                otherItem.querySelector(".dropdown").style.display = "none";
+              }
+              otherItem.classList.remove("open");
+            });
+
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+          }
+
+          e.stopPropagation();
         }
       });
+    });
 
-      const dropdown = item.querySelector(".dropdown");
-      if (dropdown) {
-        // Toggle dropdown
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-        e.stopPropagation(); // Diğer tıklamaları engelle
+    // Sayfa dışına tıklanınca masaüstü dropdown'ları kapat
+    document.addEventListener("click", () => {
+      if (window.innerWidth > 768) {
+        document.querySelectorAll(".dropdown").forEach(drop => {
+          drop.style.display = "none";
+        });
       }
     });
-  });
-
-  // Sayfa dışına tıklanınca kapat
-  document.addEventListener("click", function () {
-    document.querySelectorAll(".dropdown").forEach(drop => {
-      drop.style.display = "none";
-    });
-  });
-}, 100);
-
   });
 </script>
 
 
 
+<script src="script.js"></script>
 
 </body>
 </html>
