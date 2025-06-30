@@ -1,8 +1,10 @@
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
+// Sabit grid boyutu
 const grid = 40;
 let count = 0;
+
 let snake = {
   x: 160,
   y: 160,
@@ -11,6 +13,7 @@ let snake = {
   cells: [],
   maxCells: 4
 };
+
 let apple = {
   x: 320,
   y: 320
@@ -27,6 +30,21 @@ function getMaxGridXY() {
   };
 }
 
+function resetApple() {
+  const { maxX, maxY } = getMaxGridXY();
+  apple.x = getRandomInt(0, maxX) * grid;
+  apple.y = getRandomInt(0, maxY) * grid;
+}
+
+function resetGame() {
+  snake.x = 160;
+  snake.y = 160;
+  snake.cells = [];
+  snake.maxCells = 4;
+  snake.dx = grid;
+  snake.dy = 0;
+  resetApple();
+}
 
 function loop() {
   requestAnimationFrame(loop);
@@ -38,6 +56,7 @@ function loop() {
   snake.x += snake.dx;
   snake.y += snake.dy;
 
+  // Canvas kenarlarında dolaşsın
   if (snake.x < 0) snake.x = canvas.width - grid;
   else if (snake.x >= canvas.width) snake.x = 0;
   if (snake.y < 0) snake.y = canvas.height - grid;
@@ -46,105 +65,101 @@ function loop() {
   snake.cells.unshift({ x: snake.x, y: snake.y });
   if (snake.cells.length > snake.maxCells) snake.cells.pop();
 
+  // Yem çiz
   ctx.fillStyle = "red";
   ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
 
+  // Yılan çiz
   ctx.fillStyle = "lime";
   snake.cells.forEach((cell, index) => {
     ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
 
+    // Yem yendi mi
     if (cell.x === apple.x && cell.y === apple.y) {
       snake.maxCells++;
-      const { maxX, maxY } = getMaxGridXY();
-      apple.x = getRandomInt(0, maxX) * grid;
-      apple.y = getRandomInt(0, maxY) * grid;
+      resetApple();
     }
-    
 
+    // Kendine çarptı mı
     for (let i = index + 1; i < snake.cells.length; i++) {
       if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-        snake.x = 160;
-        snake.y = 160;
-        snake.cells = [];
-        snake.maxCells = 4;
-        snake.dx = grid;
-        snake.dy = 0;
-        apple.x = getRandomInt(0, 20) * grid;
-        apple.y = getRandomInt(0, 20) * grid;
+        resetGame();
+        return;
       }
     }
   });
 }
 
 document.addEventListener("keydown", e => {
-    // Sayfanın kaymasını engelle
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-      e.preventDefault();
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    e.preventDefault();
+  }
+
+  if (e.key === "ArrowLeft" && snake.dx === 0) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  } else if (e.key === "ArrowUp" && snake.dy === 0) {
+    snake.dy = -grid;
+    snake.dx = 0;
+  } else if (e.key === "ArrowRight" && snake.dx === 0) {
+    snake.dx = grid;
+    snake.dy = 0;
+  } else if (e.key === "ArrowDown" && snake.dy === 0) {
+    snake.dy = grid;
+    snake.dx = 0;
+  }
+});
+
+function resizeCanvas() {
+  // Canvas boyutunu tam grid'e uyacak şekilde ayarla
+  const size = Math.floor(Math.min(window.innerWidth, window.innerHeight) / grid) * grid;
+  canvas.width = size;
+  canvas.height = size;
+  resetApple();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  resizeCanvas();
+
+  let startX = null;
+  let startY = null;
+
+  canvas.addEventListener("touchstart", e => {
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    e.preventDefault();
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", e => {
+    if (!startX || !startY) return;
+
+    const touch = e.touches[0];
+    const diffX = touch.clientX - startX;
+    const diffY = touch.clientY - startY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0 && snake.dx === 0) {
+        snake.dx = grid;
+        snake.dy = 0;
+      } else if (diffX < 0 && snake.dx === 0) {
+        snake.dx = -grid;
+        snake.dy = 0;
+      }
+    } else {
+      if (diffY > 0 && snake.dy === 0) {
+        snake.dy = grid;
+        snake.dx = 0;
+      } else if (diffY < 0 && snake.dy === 0) {
+        snake.dy = -grid;
+        snake.dx = 0;
+      }
     }
-  
-    if (e.key === "ArrowLeft" && snake.dx === 0) {
-      snake.dx = -grid;
-      snake.dy = 0;
-    } else if (e.key === "ArrowUp" && snake.dy === 0) {
-      snake.dy = -grid;
-      snake.dx = 0;
-    } else if (e.key === "ArrowRight" && snake.dx === 0) {
-      snake.dx = grid;
-      snake.dy = 0;
-    } else if (e.key === "ArrowDown" && snake.dy === 0) {
-      snake.dy = grid;
-      snake.dx = 0;
-    }
-  });
-  
+
+    e.preventDefault();
+    startX = null;
+    startY = null;
+  }, { passive: false });
+});
 
 requestAnimationFrame(loop);
-
-
-  document.addEventListener("DOMContentLoaded", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    let startX = null;
-    let startY = null;
-  
-    canvas.addEventListener("touchstart", e => {
-      const touch = e.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      e.preventDefault();
-    }, { passive: false });
-  
-    canvas.addEventListener("touchmove", e => {
-      if (!startX || !startY) return;
-  
-      const touch = e.touches[0];
-      const diffX = touch.clientX - startX;
-      const diffY = touch.clientY - startY;
-  
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX > 0 && snake.dx === 0) {
-          snake.dx = grid;
-          snake.dy = 0;
-        } else if (diffX < 0 && snake.dx === 0) {
-          snake.dx = -grid;
-          snake.dy = 0;
-        }
-      } else {
-        if (diffY > 0 && snake.dy === 0) {
-          snake.dy = grid;
-          snake.dx = 0;
-        } else if (diffY < 0 && snake.dy === 0) {
-          snake.dy = -grid;
-          snake.dx = 0;
-        }
-      }
-  
-      e.preventDefault();
-      startX = null;
-      startY = null;
-    }, { passive: false });
-  });
-  
-  
-  
