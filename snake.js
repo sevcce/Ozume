@@ -2,7 +2,9 @@ const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
 // Sabit grid boyutu
-const grid = 40;
+//const grid = 40;
+let grid = window.innerWidth <= 768 ? 20 : 40;
+
 
 let count = 0;
 
@@ -114,12 +116,21 @@ document.addEventListener("keydown", e => {
   }
 });
 
+//function resizeCanvas() {
+  //const size = Math.floor(Math.min(window.innerWidth, window.innerHeight) / grid) * grid;
+  //canvas.width = size;
+  //canvas.height = size;
+  //resetApple();
+//}
+
 function resizeCanvas() {
   const size = Math.floor(Math.min(window.innerWidth, window.innerHeight) / grid) * grid;
   canvas.width = size;
   canvas.height = size;
   resetApple();
 }
+
+
 
 
 
