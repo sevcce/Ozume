@@ -57,21 +57,17 @@ const messages = [
     window.open('agaclar.html', '_blank');
   }
 
-  // Hamburger menü açma/kapama
-document.getElementById("menuToggle").addEventListener("click", () => {
-  document.getElementById("navLinks").classList.toggle("active");
-});
+  function openSnakeGame() {
+    const isMobile = window.innerWidth <= 768;
+    const w = isMobile ? Math.min(window.innerWidth - 20, 500) : 800;
+    const h = isMobile ? w + 50 : 850;
+  
+    window.open("snake.html", "SnakeGame", `width=${w},height=${h},resizable=yes`);
+  }
+  
 
-// Mobilde menü öğelerine tıklayınca dropdown aç/kapat
-document.querySelectorAll(".nav-item > a").forEach(link => {
-  link.addEventListener("click", function (e) {
-    const parent = this.parentElement;
-    if (window.innerWidth <= 768) {
-      e.preventDefault(); // Sayfayı kaydırma
-      parent.classList.toggle("open");
-    }
-  });
-});
+  
+  
 
 
   
