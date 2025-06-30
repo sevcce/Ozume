@@ -406,7 +406,10 @@
         <img src="WhatsApp Image 2025-06-11 at 16.47.58 2.jpeg" alt="Logo">
         <span>SevÖz</span>
       </div>
+
+      <div class="menu-toggle" onclick="toggleMenu()">☰</div>
       <div class="nav-links">
+
         
         <div class="nav-item">
           <a href="#">Menü</a>
@@ -467,6 +470,12 @@ setTimeout(() => {
 
   });
 </script>
+<script>
+  function toggleMenu() {
+    document.querySelector(".nav-links").classList.toggle("open");
+  }
+</script>
+
 
 
 </body>
