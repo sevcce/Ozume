@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 
 // Sabit grid boyutu
 const grid = 40;
+
 let count = 0;
 
 let snake = {
@@ -13,6 +14,8 @@ let snake = {
   cells: [],
   maxCells: 4
 };
+
+
 
 let apple = {
   x: 320,
@@ -28,6 +31,7 @@ function getMaxGridXY() {
     maxX: Math.floor(canvas.width / grid),
     maxY: Math.floor(canvas.height / grid)
   };
+  
 }
 
 function resetApple() {
@@ -111,12 +115,13 @@ document.addEventListener("keydown", e => {
 });
 
 function resizeCanvas() {
-  // Canvas boyutunu tam grid'e uyacak şekilde ayarla
   const size = Math.floor(Math.min(window.innerWidth, window.innerHeight) / grid) * grid;
   canvas.width = size;
   canvas.height = size;
   resetApple();
 }
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   resizeCanvas();
