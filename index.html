@@ -125,6 +125,52 @@
       padding-left: 1.5rem;
     }
   }
+
+  .menu-toggle {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background-color: purple;
+    width: 100%;
+    position: absolute;
+    top: 52px;
+    left: 0;
+    z-index: 1000;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links .nav-item a {
+    padding: 12px 20px;
+  }
+
+  .nav-item:hover .dropdown {
+    display: none;
+  }
+
+  .nav-item.open .dropdown {
+    display: block;
+  }
+
+  .dropdown {
+    background-color: #b678d3;
+    border-radius: 0;
+  }
+}
+
   </style>
   
 </head>
@@ -169,7 +215,7 @@
 
   <div class="container">
     
-    <div id="messageBox">Seni çok seviyorum sevgilim❤️</div>
+    <div id="messageBox">🌸 HOS GELDIN YUVAM 🌸</div>
     <button onclick="showMessage()">Tıklasana</button>
     <br>
     <br>
@@ -407,7 +453,8 @@
         <span>SevÖz</span>
       </div>
 
-      <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+      <div class="menu-toggle" id="menuToggle">&#9776;</div> <!-- Hamburger ikon -->
+
       <div class="nav-links">
 
         
@@ -470,11 +517,7 @@ setTimeout(() => {
 
   });
 </script>
-<script>
-  function toggleMenu() {
-    document.querySelector(".nav-links").classList.toggle("open");
-  }
-</script>
+
 
 
 
