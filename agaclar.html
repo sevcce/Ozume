@@ -70,6 +70,8 @@
     const container = document.querySelector('.agac-daire-container');
     const totalImages = 25;
     const radius = 160;
+    const center = container.offsetWidth / 2;
+
 
     for (let i = 1; i <= totalImages; i++) {
       const angle = (i / totalImages) * 2 * Math.PI;
@@ -86,8 +88,8 @@
 img.style.width = `${size}px`;
 img.style.height = `${size}px`;
 img.style.borderRadius = '50%';
-img.style.left = `${200 + x - size / 2}px`;
-img.style.top = `${200 + y - size / 2}px`;
+img.style.left = `${center + x - size / 2}px`;
+img.style.top = `${center + y - size / 2}px`;
 img.style.cursor = 'pointer';
 img.onclick = () => openFullscreen(img.src);
 
