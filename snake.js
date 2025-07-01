@@ -43,6 +43,9 @@ function resetApple() {
 }
 
 function resetGame() {
+  const finalScore = snake.maxCells - 4;
+  promptAndSaveScore(finalScore);
+
   snake.x = 160;
   snake.y = 160;
   snake.cells = [];
@@ -51,6 +54,7 @@ function resetGame() {
   snake.dy = 0;
   resetApple();
 }
+
 
 function loop() {
   requestAnimationFrame(loop);
@@ -179,3 +183,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 requestAnimationFrame(loop);
+
+const players = ["oz", "sev"];
+
+function saveScore(player, score) {
+  const key = `scores_${player}`;
+  const scores = JSON.parse(localStorage.getItem(key)) || [];
+  scores.unshift(score);
+  const top3 = scores.slice(0, 3);
+  localStorage.setItem(key, JSON.stringify(top3));
+}
+
+function openScoreBoard() {
+  window.open("skor.html", "_blank");
+}
+
+function promptAndSaveScore(score) {
+  let player = prompt("Kim oynadı? 'oz' ya da 'sev' yaz:");
+  if (!player) return;
+
+  player = player.toLowerCase().trim();
+  if (players.includes(player)) {
+    saveScore(player, score);
+  } else {
+    alert("Geçersiz oyuncu. Skor kaydedilmedi.");
+  }
+}
