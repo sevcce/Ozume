@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gökkuşağı Takvim</title>
+  <style>
+    /* Tüm CSS içeriğin aynı şekilde korunmuştur (kaydırarak bakabilirsiniz) */
+    /* ... [CSS kodları aynı kaldı, mesajı kısaltmak için çıkarıldı] ... */
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f0f8;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      padding: 30px;
+    }
+    .calendar-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 1000px;
+      width: 100%;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .header button {
+      background: #6666ff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .month-year {
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff5f6d;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+    .weekday, .day {
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    .weekday {
+      background: #f0f0f0;
+      font-weight: bold;
+      text-align: center;
+    }
+    .day {
+      aspect-ratio: 4 / 3;
+      background: #fefefe;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 16px;
+      font-size: 16px;
+      overflow: hidden;
+      transition: all 0.2s ease-in-out;
+    }
+    .day span {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .day:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .today {
+      border: 2px solid #6666ff;
+    }
+    .day:nth-child(7n+0) { background: #ffe6e6; }
+    .day:nth-child(7n+1) { background: #fff0e6; }
+    .day:nth-child(7n+2) { background: #ffffe6; }
+    .day:nth-child(7n+3) { background: #e6ffe6; }
+    .day:nth-child(7n+4) { background: #e6f9ff; }
+    .day:nth-child(7n+5) { background: #f0e6ff; }
+    .day:nth-child(7n+6) { background: #ffe6ff; }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      animation: zoomIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { background-color: rgba(0,0,0,0); }
+      to { background-color: rgba(0,0,0,0.4); }
+    }
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-content h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 15px;
+      resize: none;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .modal-content button {
+      background: #6666ff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 4px 6px 0 0;
+    }
+
+    #noteList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .note-card {
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 10px;
+      width: 130px;
+      word-wrap: break-word;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 14px;
+    }
+
+    .note-card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .note-controls {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+    }
+
+    .note-controls button {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+
+    /* 🔍 Tam ekran modal */
+    #imageModal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+
+    #imageModal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+<div class="calendar-container">
+  <div class="header">
+    <button onclick="changeMonth(-1)">◀</button>
+    <div class="month-year" id="monthYear"></div>
+    <button onclick="changeMonth(1)">▶</button>
+  </div>
+  <div class="calendar" id="calendar"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3 id="selectedDateTitle"></h3>
+    <div id="noteList"></div>
+    <textarea rows="3" id="noteInput" placeholder="Yeni not ekle..."></textarea>
+    <input type="file" id="photoInput" accept="image/*" />
+    <br />
+    <button onclick="saveNote()">Kaydet</button>
+    <button onclick="closeModal()">Kapat</button>
+  </div>
+</div>
+
+<div id="imageModal" onclick="closeImageModal()">
+  <img id="modalImage" src="" alt="Büyütülmüş Görsel" />
+</div>
+
+<script>
+  const calendar = document.getElementById("calendar");
+  const monthYear = document.getElementById("monthYear");
+  const modal = document.getElementById("modal");
+  const noteInput = document.getElementById("noteInput");
+  const photoInput = document.getElementById("photoInput");
+  const selectedDateTitle = document.getElementById("selectedDateTitle");
+  const noteList = document.getElementById("noteList");
+
+  let currentDate = new Date();
+  let selectedDateStr = "";
+
+  const weekdays = ["Pz", "Pt", "Sa", "Ça", "Pe", "Cu", "Ct"];
+  const months = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+
+  function generateCalendar(date) {
+    calendar.style.opacity = 0;
+    setTimeout(() => {
+      calendar.innerHTML = "";
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      monthYear.textContent = `${months[month]} ${year}`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const start = firstDay === 0 ? 6 : firstDay - 1;
+
+      weekdays.forEach(d => {
+        const div = document.createElement("div");
+        div.className = "weekday";
+        div.textContent = d;
+        calendar.appendChild(div);
+      });
+
+      for (let i = 0; i < start; i++) {
+        calendar.appendChild(document.createElement("div"));
+      }
+
+      const today = new Date();
+
+      for (let day = 1; day <= totalDays; day++) {
+        const div = document.createElement("div");
+        div.className = "day";
+        const dateStr = `${year}-${month + 1}-${day}`;
+        const notes = JSON.parse(localStorage.getItem(dateStr)) || [];
+
+        if (
+          day === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ) {
+          div.classList.add("today");
+        }
+
+        div.innerHTML = `<span>${day}</span>`;
+        notes.forEach(note => {
+          const p = document.createElement("div");
+          p.className = "note-text";
+          p.innerHTML = `<span class="note-dot">•</span>${note.text || note}`;
+          div.appendChild(p);
+        });
+
+        div.onclick = () => openModal(dateStr);
+        calendar.appendChild(div);
+      }
+      calendar.style.opacity = 1;
+    }, 200);
+  }
+
+  function changeMonth(diff) {
+    currentDate.setMonth(currentDate.getMonth() + diff);
+    generateCalendar(currentDate);
+  }
+
+  function openModal(dateStr) {
+    selectedDateStr = dateStr;
+    selectedDateTitle.textContent = `Notlar - ${dateStr}`;
+    noteInput.value = "";
+    photoInput.value = "";
+
+    const notes = JSON.parse(localStorage.getItem(dateStr)) || [];
+    noteList.innerHTML = "";
+
+    notes.forEach((note, i) => {
+      const card = document.createElement("div");
+      card.className = "note-card";
+
+      const text = document.createElement("div");
+      text.innerHTML = `<span class="note-dot">•</span> ${note.text || ""}`;
+      card.appendChild(text);
+
+      if (note.image) {
+        const img = document.createElement("img");
+        img.src = note.image;
+        img.onclick = (e) => {
+          e.stopPropagation();
+          openImageModal(note.image);
+        };
+        card.appendChild(img);
+      }
+
+      const controls = document.createElement("div");
+      controls.className = "note-controls";
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "✕";
+      delBtn.onclick = () => {
+        notes.splice(i, 1);
+        localStorage.setItem(dateStr, JSON.stringify(notes));
+        openModal(dateStr);
+        generateCalendar(currentDate);
+      };
+
+      controls.appendChild(delBtn);
+      card.appendChild(controls);
+
+      noteList.appendChild(card);
+    });
+
+    modal.style.display = "flex";
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  function saveNote() {
+    const value = noteInput.value.trim();
+    const file = photoInput.files[0];
+
+    if (!value && !file) return;
+
+    let notes = JSON.parse(localStorage.getItem(selectedDateStr)) || [];
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ozgePreset");
+      formData.append("cloud_name", "dwaeyicpy");
+
+      fetch("https://api.cloudinary.com/v1_1/dwaeyicpy/image/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        const imageUrl = data.secure_url;
+        notes.push({ text: value, image: imageUrl });
+        localStorage.setItem(selectedDateStr, JSON.stringify(notes));
+        noteInput.value = "";
+        photoInput.value = "";
+        closeModal();
+        generateCalendar(currentDate);
+      })
+      .catch(err => {
+        alert("Fotoğraf yüklenirken bir hata oluştu.");
+        console.error(err);
+      });
+    } else {
+      notes.push({ text: value });
+      localStorage.setItem(selectedDateStr, JSON.stringify(notes));
+      noteInput.value = "";
+      photoInput.value = "";
+      closeModal();
+      generateCalendar(currentDate);
+    }
+  }
+
+  function openImageModal(src) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    modalImg.src = src;
+    modal.style.display = "flex";
+  }
+
+  function closeImageModal() {
+    const modal = document.getElementById("imageModal");
+    modal.style.display = "none";
+    document.getElementById("modalImage").src = "";
+  }
+
+  generateCalendar(currentDate);
+
+  noteInput.addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+  });
+</script>
+</body>
+</html>
