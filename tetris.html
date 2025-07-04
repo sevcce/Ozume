@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>Tetris | Skor: 0</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <style>
     body {
       background: #111;
@@ -33,6 +36,7 @@
       padding: 15px 20px;
       font-size: 18px;
       border-radius: 8px;
+      touch-action: manipulation;
     }
     #scoreBoard {
       margin-top: 10px;
@@ -345,16 +349,28 @@
     playerReset(); // Oyuncuyu başlat
 update();      // Oyun döngüsünü başlat
 
-// Ekranın yön tuşları veya swipe ile kaymasını engelle
 window.addEventListener('keydown', function(e) {
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
-    e.preventDefault();
-  }
-}, { passive: false });
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
-window.addEventListener('touchmove', function(e) {
-  e.preventDefault();
-}, { passive: false });
+  // Dokunma ve kaydırma olaylarını engelle
+  ['touchstart', 'touchmove', 'touchend'].forEach(eventType => {
+    window.addEventListener(eventType, function(e) {
+      if (e.target.tagName === 'BUTTON') {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  });
+
+  window.addEventListener('keydown', function(e) {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  
 
 
   </script>
