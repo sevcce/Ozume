@@ -85,6 +85,8 @@
     };
 
     let highScore = parseInt(localStorage.getItem("tetrisHighScore")) || 0;
+    document.getElementById('highScore').textContent = highScore;
+
 
     let dropCounter = 0;
     let dropInterval = 1000;
@@ -342,6 +344,18 @@
     updateScore(); // Skorları DOM’a yaz
     playerReset(); // Oyuncuyu başlat
 update();      // Oyun döngüsünü başlat
+
+// Ekranın yön tuşları veya swipe ile kaymasını engelle
+window.addEventListener('keydown', function(e) {
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+window.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+}, { passive: false });
+
 
   </script>
 </body>
