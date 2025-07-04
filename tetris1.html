@@ -225,8 +225,9 @@ db.ref('highScore').once('value').then(snapshot => {
       player.pos.x = Math.floor(arena[0].length / 2) - Math.floor(player.matrix[0].length / 2);
       if (collide(arena, player)) {
         if (player.score > highScore) {
-          db.ref('highScore').set(player.score);
+           updateHighScoreIfNeeded(player.score);
         }
+
         document.getElementById('gameOver').style.display = 'block';
         setTimeout(() => document.getElementById('gameOver').style.display = 'none', 5000);
         player.score = 0;
@@ -262,7 +263,7 @@ db.ref('highScore').once('value').then(snapshot => {
       if (player.score > highScore) {
         highScore = player.score;
         document.getElementById('highScore').textContent = highScore;
-        db.ref('highScore').set(highScore);
+        updateHighScoreIfNeeded(highScore);
       }
     }
 
