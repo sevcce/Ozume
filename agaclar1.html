@@ -82,7 +82,7 @@
 
   <script>
     const container = document.querySelector('.agac-daire-container');
-    const totalImages = 25;
+    const totalImages = 23;
     const radius = 160;
     const center = container.offsetWidth / 2;
 
@@ -92,8 +92,8 @@
       const y = Math.sin(angle) * radius;
 
       const img = document.createElement('img');
-      img.src = `agaclar/agaclar${i}.jpg`;
-      img.alt = `Ağaç ${i}`;
+      img.src = `agaclar1/agaclar${i}.jpg`;
+      img.alt = `Agac ${i}`;
       img.style.position = 'absolute';
 
       const size = window.innerWidth < 500 ? window.innerWidth * 0.12 : 50;
