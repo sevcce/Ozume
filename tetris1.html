@@ -90,12 +90,11 @@
     const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
 
     let highScore = 0;
-    db.ref('highScore').once('value').then(snapshot => {
-  const firebaseHighScore = snapshot.val() || 0;
-  if (player.score > firebaseHighScore) {
-    db.ref('highScore').set(player.score);
-  }
+db.ref('highScore').once('value').then(snapshot => {
+  highScore = snapshot.val() || 0;
+  document.getElementById('highScore').textContent = highScore;
 });
+
 
 
     let dropCounter = 0;
@@ -295,6 +294,17 @@
         }
       }, { passive: false });
     });
+
+    function updateHighScoreIfNeeded(score) {
+  db.ref('highScore').once('value').then(snapshot => {
+    const current = snapshot.val() || 0;
+    if (score > current) {
+      db.ref('highScore').set(score);
+    }
+  }).catch((e) => {
+    console.error("Skor yazılamadı:", e);
+  });
+}
 
     playerReset();
     update();
