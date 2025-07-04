@@ -53,9 +53,6 @@ const messages = [
   }
 
   
-  function openAgaclar() {
-    window.open('agaclar.html', '_blank');
-  }
 
   function openSnakeGame() {
     const isMobile = window.innerWidth <= 768;
@@ -65,6 +62,31 @@ const messages = [
     window.open("snake.html", "SnakeGame", `width=${w},height=${h},resizable=yes`);
   }
   
+
+  
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const carousel = document.querySelector(".photo-carousel");
+    const track = document.querySelector(".carousel-track");
+
+    if (carousel && track) {
+      carousel.addEventListener("touchstart", () => {
+        track.classList.add("paused");
+      });
+
+      carousel.addEventListener("touchend", () => {
+        track.classList.remove("paused");
+      });
+
+      // Masaüstü desteği de istersen:
+      carousel.addEventListener("mouseenter", () => {
+        track.classList.add("paused");
+      });
+      carousel.addEventListener("mouseleave", () => {
+        track.classList.remove("paused");
+      });
+    }
+  });
 
   
   
