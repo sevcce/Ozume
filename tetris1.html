@@ -309,6 +309,12 @@ db.ref('highScore').once('value').then(snapshot => {
 
     playerReset();
     update();
+    window.addEventListener('beforeunload', function () {
+  if (player.score > highScore) {
+    db.ref('highScore').set(player.score);
+  }
+});
+
   </script>
 </body>
 </html>
