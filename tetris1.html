@@ -90,10 +90,13 @@
     const player = { pos: {x: 0, y: 0}, matrix: null, score: 0 };
 
     let highScore = 0;
-    db.ref('highScore').on('value', snapshot => {
-      highScore = snapshot.val() || 0;
-      document.getElementById('highScore').textContent = highScore;
-    });
+    db.ref('highScore').once('value').then(snapshot => {
+  const firebaseHighScore = snapshot.val() || 0;
+  if (player.score > firebaseHighScore) {
+    db.ref('highScore').set(player.score);
+  }
+});
+
 
     let dropCounter = 0;
     let dropInterval = 1000;
