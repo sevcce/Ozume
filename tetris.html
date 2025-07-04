@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Tetris | Skor: 0</title>
   
   <style>
@@ -36,7 +37,6 @@
       padding: 15px 20px;
       font-size: 18px;
       border-radius: 8px;
-      touch-action: manipulation;
     }
     #scoreBoard {
       margin-top: 10px;
@@ -347,7 +347,7 @@
 
     updateScore(); // Skorları DOM’a yaz
     playerReset(); // Oyuncuyu başlat
-update();      // Oyun döngüsünü başlat
+    update();      // Oyun döngüsünü başlat
 
 window.addEventListener('keydown', function(e) {
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
@@ -355,22 +355,22 @@ window.addEventListener('keydown', function(e) {
     }
   }, { passive: false });
 
-  // Dokunma ve kaydırma olaylarını engelle
-  ['touchstart', 'touchmove', 'touchend'].forEach(eventType => {
-    window.addEventListener(eventType, function(e) {
-      if (e.target.tagName === 'BUTTON') {
-        e.preventDefault();
-      }
-    }, { passive: false });
-  });
+  // Mobildeki tuşlar için touchstart desteği
+document.querySelectorAll('#controls button').forEach((btn, index) => {
+  btn.addEventListener('touchstart', function(e) {
+    e.preventDefault(); // dokunmatik kaydırmayı engelle
 
-  window.addEventListener('keydown', function(e) {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
-      e.preventDefault();
+    switch(index) {
+      case 0: playerMove(-1); break; // ◀️
+      case 1: playerDrop(); break;   // ⬇️
+      case 2: playerMove(1); break;  // ▶️
+      case 3: playerRotate(1); break; // 🔄
     }
   }, { passive: false });
+});
 
-  
+
+
 
 
   </script>
