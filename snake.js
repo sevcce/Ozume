@@ -1,3 +1,17 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyAcRbqwZhYhoZQudskIug7WYNUck7VlXD4",  // kendi key'ini gir
+  authDomain: "tetris-skor.firebaseapp.com",
+  databaseURL: "https://tetris-skor-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tetris-skor",
+  storageBucket: "tetris-skor.appspot.com",
+  messagingSenderId: "438988899189",
+  appId: "1:438988899189:web:0b2a3f196ab7a7d26e093c"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+
 const canvas = document.getElementById("snakeCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -195,7 +209,15 @@ function saveScore(player, score) {
 }
 
 function openScoreBoard() {
-  window.open("skor.html", "_blank");
+  window.open("snakeSkor.html", "_blank");
+}
+
+function saveScoreToFirebase(player, score) {
+  const newRef = db.ref("snakeScores/" + player).push();
+  newRef.set({
+    score: score,
+    timestamp: Date.now()
+  });
 }
 
 function promptAndSaveScore(score) {
@@ -204,8 +226,12 @@ function promptAndSaveScore(score) {
 
   player = player.toLowerCase().trim();
   if (players.includes(player)) {
-    saveScore(player, score);
+    saveScore(player, score);           // localStorage kaydı
+    saveScoreToFirebase(player, score); // Firebase kaydı
   } else {
     alert("Geçersiz oyuncu. Skor kaydedilmedi.");
   }
 }
+
+
+
