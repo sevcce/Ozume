@@ -12,7 +12,10 @@
   <h2 onclick="openSnakeGame()" class="rainbow-text">Kıvrıla Kıvrıla Gel Bana</h2>
   <canvas id="snakeCanvas" width="400" height="400"></canvas>
   <button onclick="openScoreBoard()" style="margin-top: 20px;">📊 Skor Tablosunu Gör</button>
-  
-  <script src="snake.js"></script>
+
+  <!-- snake.html dosyanda, <body> sonuna snake.js'den önce ekle -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+ <script src="snake.js"></script>
 </body>
 </html>
