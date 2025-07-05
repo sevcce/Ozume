@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yılan Oyunu Skor Tablosu</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      flex-direction: column;
+    }
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 520px;
+      table-layout: fixed;
+      text-align: center;
+      /* Tablonun tamamı gökkuşağı degrade olacak */
+      background: linear-gradient(90deg, 
+        #FF0000,   /* Kırmızı */
+        #FF7F00,   /* Turuncu */
+        #FFFF00,   /* Sarı */
+        #00FF00,   /* Yeşil */
+        #00CED1,   /* Camgöbeği */
+        #0000FF,   /* Mavi */
+        #8B00FF    /* Mor */
+      );
+      color: white;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    thead tr, tbody tr {
+      /* Arka planı kaldırdım, çünkü tablonun tamamı zaten degrade */
+      background: transparent !important;
+    }
+    thead th {
+      padding: 14px 0;
+      border-right: 1px solid rgba(255,255,255,0.3);
+      font-weight: 700;
+      font-size: 1.1em;
+      user-select: none;
+    }
+    thead th:last-child {
+      border-right: none;
+    }
+    tbody td {
+      padding: 14px 0;
+      border-right: 1px solid rgba(255,255,255,0.3);
+      font-weight: 600;
+      word-wrap: break-word;
+      vertical-align: middle;
+      background: rgba(0,0,0,0.3); /* Yazının arka planını biraz koyulaştırarak okunabilirlik artırıldı */
+      color: #fff;
+    }
+    tbody td:last-child {
+      border-right: none;
+    }
+    tbody td:first-child {
+      font-weight: 700;
+      text-transform: uppercase;
+      width: 100px;
+      background: rgba(0,0,0,0.5); /* Oyuncu sütununu biraz daha koyu yap */
+    }
+    tbody td:nth-child(n+2) {
+      width: 130px;
+    }
+    .date {
+      display: block;
+      font-size: 0.7em;
+      opacity: 0.7;
+      margin-top: 2px;
+      font-weight: 400;
+      color: #ddd;
+    }
+    @media (max-width: 480px) {
+  body {
+    padding: 15px;
+  }
+  table {
+    font-size: 0.85em;
+  }
+  thead th, tbody td {
+    padding: 10px 5px;
+  }
+  .date {
+    font-size: 0.6em;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <h2>🐍 Yılan Oyunu Skor Tablosu</h2>
+
+  <div id="scoreContainer">
+    <div style="color: #ccc; text-align:center;">Yükleniyor...</div>
+  </div>
+
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAcRbqwZhYhoZQudskIug7WYNUck7VlXD4",
+      authDomain: "tetris-skor.firebaseapp.com",
+      databaseURL: "https://tetris-skor-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "tetris-skor",
+      storageBucket: "tetris-skor.appspot.com",
+      messagingSenderId: "438988899189",
+      appId: "1:438988899189:web:0b2a3f196ab7a7d26e093c"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const players = ["oz", "sev"];
+    const container = document.getElementById("scoreContainer");
+
+    function formatDate(timestamp) {
+      const d = new Date(timestamp);
+      return d.toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function fetchPlayerScores(player) {
+      return db.ref(`snakeScores/${player}`).orderByChild("timestamp").limitToLast(3).once("value").then(snapshot => {
+        const scores = [];
+        snapshot.forEach(child => {
+          scores.push(child.val());
+        });
+        scores.sort((a,b) => b.timestamp - a.timestamp);
+        return scores;
+      });
+    }
+
+    async function fetchAllScores() {
+      container.innerHTML = "";
+      const allScores = {};
+      for (const player of players) {
+        allScores[player] = await fetchPlayerScores(player);
+      }
+      createTable(allScores);
+    }
+
+    function createTable(data) {
+      const table = document.createElement("table");
+
+      const thead = document.createElement("thead");
+      thead.innerHTML = `
+        <tr>
+          <th>Oyuncu</th>
+          <th>En Son</th>
+          <th>Bi' Önceki</th>
+          <th>Bi' bi' Önceki</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      for (let i = 0; i < players.length; i++) {
+        const player = players[i];
+        const scores = data[player];
+        const tr = document.createElement("tr");
+
+        const tdPlayer = document.createElement("td");
+        tdPlayer.textContent = player.toUpperCase();
+        tr.appendChild(tdPlayer);
+
+        for (let j = 0; j < 3; j++) {
+          const td = document.createElement("td");
+          if (scores[j]) {
+            td.innerHTML = `${scores[j].score} <span class="date">${formatDate(scores[j].timestamp)}</span>`;
+          } else {
+            td.textContent = "-";
+            td.style.opacity = "0.6";
+          }
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      container.appendChild(table);
+    }
+
+    fetchAllScores();
+  </script>
+</body>
+</html>
