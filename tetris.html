@@ -116,6 +116,20 @@
       }
     });
 
+    // Pause butonuna dokunma event'i ekle
+pauseButton.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  isPaused = !isPaused;
+  if (!isPaused) {
+    lastTime = performance.now();
+    update();
+    pauseButton.textContent = '😴';
+  } else {
+    pauseButton.textContent = '😎';
+  }
+});
+
+
     function createMatrix(w, h) {
       const matrix = [];
       while (h--) matrix.push(new Array(w).fill(0));
