@@ -74,7 +74,8 @@
       messagingSenderId: "438988899189",
       appId: "1:438988899189:web:0b2a3f196ab7a7d26e093c",
       measurementId: "G-EPVQK97QCY",
-      databaseURL: "https://tetris-skor-default-rtdb.firebaseio.com"
+      databaseURL: "https://tetris-skor-default-rtdb.europe-west1.firebasedatabase.app"
+
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -264,33 +265,46 @@ pauseButton.addEventListener('click', togglePause);
     }
 
     function arenaSweep() {
-      let rowCount = 1;
-      outer: for (let y = arena.length - 1; y >= 0; --y) {
-        for (let x = 0; x < arena[y].length; ++x) {
-          if (arena[y][x] === 0) continue outer;
-        }
-        const row = arena.splice(y, 1)[0].fill(0);
-        arena.unshift(row);
-        y++;
-        player.score += rowCount * 10;
-        linesCleared += 1;
-        if (linesCleared % 10 === 0 && dropInterval > 200) {
-          level++;
-          dropInterval -= 100;
-        }
-        rowCount *= 2;
-      }
+  let lines = 0;
+
+  outer: for (let y = arena.length - 1; y >= 0; --y) {
+    for (let x = 0; x < arena[y].length; ++x) {
+      if (arena[y][x] === 0) continue outer;
     }
 
-    function updateScore() {
-      document.getElementById('score').textContent = player.score;
-      document.title = `Tetris | Skor: ${player.score}`;
-      if (player.score > highScore) {
-        highScore = player.score;
-        document.getElementById('highScore').textContent = highScore;
-        updateHighScoreIfNeeded(highScore);
-      }
+    const row = arena.splice(y, 1)[0].fill(0);
+    arena.unshift(row);
+    y--;
+
+    lines++;
+  }
+
+  if (lines > 0) {
+    increaseScore(lines);
+    linesCleared += lines;
+    if (linesCleared % 10 === 0 && dropInterval > 200) {
+      level++;
+      dropInterval -= 100;
     }
+  }
+}
+
+function increaseScore(linesClearedAtOnce) {
+  const linePoints = [0, 40, 100, 300, 1200]; // 0-4 satır için standart puan
+  player.score += linePoints[linesClearedAtOnce] * (level + 1);
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('score').textContent = player.score;
+  document.title = `Tetris | Skor: ${player.score}`;
+  if (player.score > highScore) {
+    highScore = player.score;
+    document.getElementById('highScore').textContent = highScore;
+    updateHighScoreIfNeeded(highScore);
+  }
+}
+
 
     function update(time = 0) {
       if (isPaused) return; // Pause durumunda update çağrısını durdur
