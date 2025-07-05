@@ -105,19 +105,8 @@
     let isPaused = false;  // Pause durumu
 
     const pauseButton = document.getElementById('pauseButton');
-    pauseButton.addEventListener('click', () => {
-      isPaused = !isPaused;
-      if (!isPaused) {
-        lastTime = performance.now();
-        update();
-        pauseButton.textContent = '😴';
-      } else {
-        pauseButton.textContent = '😎';
-      }
-    });
 
-    // Pause butonuna dokunma event'i ekle
-pauseButton.addEventListener('touchstart', (e) => {
+function togglePause(e) {
   e.preventDefault();
   isPaused = !isPaused;
   if (!isPaused) {
@@ -127,7 +116,14 @@ pauseButton.addEventListener('touchstart', (e) => {
   } else {
     pauseButton.textContent = '😎';
   }
-});
+}
+
+// Dokunma olayında togglePause çağır
+pauseButton.addEventListener('touchstart', togglePause, { passive: false });
+
+// Tıklama olayında da togglePause çağır
+pauseButton.addEventListener('click', togglePause);
+
 
 
     function createMatrix(w, h) {
