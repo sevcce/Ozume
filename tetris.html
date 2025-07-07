@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Tetris | Skor: 0</title>
+  <title>Tetris Party</title>
   <style>
     body {
       background: #111;
@@ -206,8 +206,8 @@ pauseButton.addEventListener('click', togglePause);
       if (collide(arena, player)) {
         player.pos.y--;
         merge(arena, player);
-        playerReset();
         arenaSweep();
+        playerReset();
         updateScore();
       }
       dropCounter = 0;
@@ -255,7 +255,7 @@ pauseButton.addEventListener('click', togglePause);
           updateHighScoreIfNeeded(player.score);
         }
         document.getElementById('gameOver').style.display = 'block';
-        setTimeout(() => document.getElementById('gameOver').style.display = 'none', 5000);
+        setTimeout(() => document.getElementById('gameOver').style.display = 'none', 9000);
         player.score = 0;
         arena.forEach(row => row.fill(0));
         linesCleared = 0;
@@ -274,23 +274,23 @@ pauseButton.addEventListener('click', togglePause);
 
     const row = arena.splice(y, 1)[0].fill(0);
     arena.unshift(row);
-    y--;
 
     lines++;
+    y++;
   }
 
   if (lines > 0) {
     increaseScore(lines);
     linesCleared += lines;
-    if (linesCleared % 10 === 0 && dropInterval > 200) {
+    if (linesCleared % 5 === 0 && dropInterval > 300) {
       level++;
-      dropInterval -= 100;
+      dropInterval -= 150;
     }
   }
 }
 
 function increaseScore(linesClearedAtOnce) {
-  const linePoints = [0, 40, 100, 300, 1200]; // 0-4 satır için standart puan
+  const linePoints = [0, 10, 30, 60, 100]; // 0-4 satır için standart puan
   player.score += linePoints[linesClearedAtOnce] * (level + 1);
   updateScore();
 }
