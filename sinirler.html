@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sinirli Notlar</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <style>
+    body {
+      background-color: #fff0f0;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 0 15px;
+    }
+    h1 {
+      color: #d62828;
+      text-align: center;
+      font-size: 2rem;
+    }
+    select, textarea, button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px 15px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    button {
+      background-color: #d62828;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .note {
+      position: relative;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #ffe5e5;
+    }
+    .note-header {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+    .emoji {
+      font-size: 20px;
+      margin-left: 5px;
+    }
+    time {
+      display: block;
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: #a10000;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      text-align: center;
+      user-select: none;
+    }
+    .delete-btn:hover {
+      color: #ff0000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sinirlendikçe Yazılacak O Yer</h1>
+
+    <select id="userSelect">
+      <option value="Öz">Öz</option>
+      <option value="Sevc">Sevc</option>
+    </select>
+
+    <select id="angerLevel">
+      <option value="😐">😐 Az</option>
+      <option value="😠">😠 Orta</option>
+      <option value="😡">😡 Çok</option>
+    </select>
+
+    <textarea id="noteInput" placeholder="Bugün neden sinirlendin?"></textarea>
+    <button onclick="addNote()">Kaydet</button>
+
+    <div id="notesList"></div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDSKwWNK0W6uXaqmiwiMuDFiKU81Rm4E",
+      authDomain: "sinirler-68903.firebaseapp.com",
+      databaseURL: "https://sinirler-68903-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "sinirler-68903",
+      storageBucket: "sinirler-68903.appspot.com",
+      messagingSenderId: "139303215504",
+      appId: "1:139303215504:web:890bea55921e5fb23c9315",
+      measurementId: "G-HTYLSQD1F"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function addNote() {
+      const user = document.getElementById("userSelect").value;
+      const anger = document.getElementById("angerLevel").value;
+      const text = document.getElementById("noteInput").value.trim();
+      if (!text) return alert("Lütfen not yazınız.");
+
+      const note = { user, anger, text, time: new Date().toLocaleString() };
+
+      db.ref("notes").push(note).then(() => {
+        document.getElementById("noteInput").value = "";
+
+        // Notları say ve eğer 5'in katı ise prompt göster
+        db.ref("notes").once("value").then(snapshot => {
+          const notes = snapshot.val() || {};
+          const angryNotesCount = Object.values(notes).filter(n => n.anger).length;
+
+          if (angryNotesCount > 0 && angryNotesCount % 5 === 0) {
+            const happyText = prompt("Harika sinirler! Şimdi mutlu bir şeyler yazmak ister misin?");
+            if (happyText && happyText.trim()) {
+              db.ref("notes").push({
+                user,
+                happiness: "😊",
+                text: happyText.trim(),
+                time: new Date().toLocaleString()
+              });
+            }
+          }
+        });
+      }).catch(err => console.error("Kaydetme hatası:", err));
+    }
+
+    db.ref("notes").on("value", snapshot => {
+      const notesList = document.getElementById("notesList");
+      notesList.innerHTML = "";
+
+      const notes = snapshot.val();
+      if (!notes) return;
+
+      const entries = Object.entries(notes).reverse();
+
+      entries.forEach(([key, note]) => {
+        const div = document.createElement("div");
+        div.className = "note";
+
+        // Renk ayarları
+        if (note.anger === "😐") div.style.backgroundColor = "#ffdddd"; // Az sinir
+        else if (note.anger === "😠") div.style.backgroundColor = "#ff9999"; // Orta sinir
+        else if (note.anger === "😡") div.style.backgroundColor = "#ff4d4d"; // Çok sinir
+        else if (note.happiness === "😊") div.style.backgroundColor = "#d4f7d4"; // Mutlu not
+
+        div.innerHTML = `
+          <div class="note-header">${note.user} <span class="emoji">${note.anger || note.happiness || ""}</span></div>
+          <div>${note.text}</div>
+          <time>${note.time}</time>
+          <button class="delete-btn" data-key="${key}" aria-label="Sil">&times;</button>
+        `;
+
+        notesList.appendChild(div);
+      });
+
+      // Silme butonu işlevi
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.onclick = e => {
+          const key = e.target.getAttribute("data-key");
+          if (confirm("Bu notu silmek istiyor musun?")) {
+            db.ref("notes/" + key).remove();
+          }
+        };
+      });
+    });
+  </script>
+</body>
+</html>
