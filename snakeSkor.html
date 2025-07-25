@@ -30,29 +30,15 @@
       max-width: 520px;
       table-layout: fixed;
       text-align: center;
-      /* Tablonun tamamı gökkuşağı degrade olacak */
-      background: linear-gradient(90deg, 
-        #FF0000,   /* Kırmızı */
-        #FF7F00,   /* Turuncu */
-        #FFFF00,   /* Sarı */
-        #00FF00,   /* Yeşil */
-        #00CED1,   /* Camgöbeği */
-        #0000FF,   /* Mavi */
-        #8B00FF    /* Mor */
-      );
+      background: linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #00CED1, #0000FF, #8B00FF);
       color: white;
       box-shadow: 0 0 10px rgba(255,255,255,0.1);
-    }
-    thead tr, tbody tr {
-      /* Arka planı kaldırdım, çünkü tablonun tamamı zaten degrade */
-      background: transparent !important;
     }
     thead th {
       padding: 14px 0;
       border-right: 1px solid rgba(255,255,255,0.3);
       font-weight: 700;
       font-size: 1.1em;
-      user-select: none;
     }
     thead th:last-child {
       border-right: none;
@@ -61,9 +47,7 @@
       padding: 14px 0;
       border-right: 1px solid rgba(255,255,255,0.3);
       font-weight: 600;
-      word-wrap: break-word;
-      vertical-align: middle;
-      background: rgba(0,0,0,0.3); /* Yazının arka planını biraz koyulaştırarak okunabilirlik artırıldı */
+      background: rgba(0,0,0,0.3);
       color: #fff;
     }
     tbody td:last-child {
@@ -72,34 +56,15 @@
     tbody td:first-child {
       font-weight: 700;
       text-transform: uppercase;
-      width: 100px;
-      background: rgba(0,0,0,0.5); /* Oyuncu sütununu biraz daha koyu yap */
-    }
-    tbody td:nth-child(n+2) {
-      width: 130px;
+      background: rgba(0,0,0,0.5);
     }
     .date {
       display: block;
       font-size: 0.7em;
       opacity: 0.7;
       margin-top: 2px;
-      font-weight: 400;
       color: #ddd;
     }
-    @media (max-width: 480px) {
-  body {
-    padding: 15px;
-  }
-  table {
-    font-size: 0.85em;
-  }
-  thead th, tbody td {
-    padding: 10px 5px;
-  }
-  .date {
-    font-size: 0.6em;
-  }
-}
   </style>
 </head>
 <body>
@@ -110,7 +75,6 @@
     <div style="color: #ccc; text-align:center;">Yükleniyor...</div>
   </div>
 
-  <!-- Firebase compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
@@ -136,65 +100,73 @@
       return d.toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit', year: 'numeric' });
     }
 
-    function fetchPlayerScores(player) {
-      return db.ref(`snakeScores/${player}`).orderByChild("timestamp").limitToLast(3).once("value").then(snapshot => {
-        const scores = [];
-        snapshot.forEach(child => {
-          scores.push(child.val());
-        });
-        scores.sort((a,b) => b.timestamp - a.timestamp);
-        return scores;
+    async function fetchPlayerData(player) {
+      // En son 2 skor
+      const recentSnap = await db.ref(`snakeScores/${player}`)
+        .orderByChild("timestamp").limitToLast(2).once("value");
+
+      const recentData = recentSnap.val() || {};
+      const recentScores = Object.values(recentData);
+      recentScores.sort((a, b) => b.timestamp - a.timestamp);
+
+      const latest = recentScores[0] || null;
+      const previous = recentScores[1] || null;
+
+      // En yüksek skor
+      const highSnap = await db.ref(`snakeScores/${player}`)
+        .orderByChild("score").limitToLast(1).once("value");
+
+      let highScore = null;
+      highSnap.forEach(child => {
+        highScore = child.val();
       });
+
+      return { latest, previous, highScore };
     }
 
     async function fetchAllScores() {
       container.innerHTML = "";
-      const allScores = {};
+      const allData = {};
+
       for (const player of players) {
-        allScores[player] = await fetchPlayerScores(player);
+        allData[player] = await fetchPlayerData(player);
       }
-      createTable(allScores);
+
+      createTable(allData);
     }
 
     function createTable(data) {
       const table = document.createElement("table");
 
-      const thead = document.createElement("thead");
-      thead.innerHTML = `
-        <tr>
-          <th>Oyuncu</th>
-          <th>En Son</th>
-          <th>Bi' Önceki</th>
-          <th>Bi' bi' Önceki</th>
-        </tr>
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Oyuncu</th>
+            <th>En Son</th>
+            <th>Bi' Önceki</th>
+            <th>En Yüksek</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${players.map(player => {
+            const { latest, previous, highScore } = data[player];
+
+            const formatScore = (item) => {
+              return item ? `${item.score} <span class="date">${formatDate(item.timestamp)}</span>` : `<span style="opacity:0.6">-</span>`;
+            };
+
+            return `
+              <tr>
+                <td>${player.toUpperCase()}</td>
+                <td>${formatScore(latest)}</td>
+                <td>${formatScore(previous)}</td>
+                <td>${formatScore(highScore)}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
       `;
-      table.appendChild(thead);
 
-      const tbody = document.createElement("tbody");
-
-      for (let i = 0; i < players.length; i++) {
-        const player = players[i];
-        const scores = data[player];
-        const tr = document.createElement("tr");
-
-        const tdPlayer = document.createElement("td");
-        tdPlayer.textContent = player.toUpperCase();
-        tr.appendChild(tdPlayer);
-
-        for (let j = 0; j < 3; j++) {
-          const td = document.createElement("td");
-          if (scores[j]) {
-            td.innerHTML = `${scores[j].score} <span class="date">${formatDate(scores[j].timestamp)}</span>`;
-          } else {
-            td.textContent = "-";
-            td.style.opacity = "0.6";
-          }
-          tr.appendChild(td);
-        }
-        tbody.appendChild(tr);
-      }
-
-      table.appendChild(tbody);
       container.appendChild(table);
     }
 
