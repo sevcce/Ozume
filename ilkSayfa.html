@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Giriş Ekranı</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Georgia, serif;
+    background: #fff;
+    color: #5a3e36;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 100%;
+  }
+  .arrow {
+    font-size: 2.5em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #5a3e36;
+    user-select: none;
+  }
+  .arrow:disabled {
+    color: #ccc;
+    cursor: default;
+  }
+  .box {
+    border: 3px solid #d8b9f2;
+    padding: 30px 40px;
+    border-radius: 16px;
+    background: #f9f4ff;
+    min-width: 250px;
+    max-width: 90vw;
+    min-height: 150px;
+    text-align: center;
+    font-size: 1.4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.4em;
+    word-wrap: break-word;
+  }
+  #passwordSection {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 320px;
+  }
+  input[type="password"] {
+    padding: 12px;
+    font-size: 1.2em;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  button.submit {
+    padding: 12px 25px;
+    font-size: 1.2em;
+    background: #d8b9f2;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+  }
+  button.submit:hover {
+    background: #c9a0ee;
+  }
+  a {
+    color: #5a3e36;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 480px) {
+    .arrow {
+      font-size: 2em;
+    }
+    .box {
+      font-size: 1.1em;
+      padding: 20px 25px;
+      min-height: 120px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <button id="prevBtn" class="arrow" onclick="prevSentence()" aria-label="Önceki">&#8592;</button>
+  <div class="box" id="sentenceBox"></div>
+  <button id="nextBtn" class="arrow" onclick="nextSentence()" aria-label="Sonraki">&#8594;</button>
+</div>
+
+<div id="passwordSection">
+  <input type="password" id="passwordInput" placeholder="Parola" autocomplete="off" />
+  <button class="submit" onclick="checkPassword()">Giriş Yap</button>
+</div>
+
+<script>
+const sentences = [
+  `Benden özür diledin.
+Bu muydu özrünün amacı bunları söylemek miydi? Sana sadece iki soru sordum.
+Bana tahammülün yok. Anladım bunu ben.
+Bana tahammülün yok ve beni istemiyorsun. Artık yüzleşme vakti.
+Ömrün dilediğin gibi olsun. Gönlün gibi.
+Sana olan sevgime bile laf ettin ya olsun be senin canın sağ olsun.
+Ben seni çok seviyorum.`,
+  "Gözlemlediğim bir ağaç var. Bir hafta önce kuruydu sallanıyordu köklerinden. Ertesi gün dik durmakta direniyordu. Sonraki günler cabası. Şimdi görüyorum ki epey devriliyor. Biz gibi. Hayat gibi.",
+  "Hep sen konuş. Hep sen konuş son sözü söyle ve git. Benim söyleyeceklerimin hiç önemi yokmuş gibi. Sonra gel özür dile. Sonra yine git. E hadi kolay gelsin. Ben neredeyim ki?",
+  "Bunu böyle yapabilirdin bunu böyle düşünüp sorabilirdinle yürüyor bence ilişki bunu anlamalıydın ki.",
+  "Benim bir YUVAM yok artık",
+  "Benim bir RUHUM yok artık",
+  "Yalnız değil yapayalnızım artık",
+  `<a href="https://www.youtube.com/watch?v=FtJ_EIWhdew&list=RDFtJ_EIWhdew&start_radio=1" target="_blank" rel="noopener noreferrer">
+    Hadi Dinle
+  </a>`,
+  "Parola girmeniz gerekiyor."
+];
+
+let currentIndex = 0;
+const sentenceBox = document.getElementById("sentenceBox");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const passwordSection = document.getElementById("passwordSection");
+
+function updateSentence() {
+  sentenceBox.innerHTML = sentences[currentIndex];
+  prevBtn.disabled = currentIndex === 0;
+  nextBtn.disabled = currentIndex === sentences.length - 1;
+
+  if (currentIndex === sentences.length - 1) {
+    document.querySelector(".container").style.display = "none";
+    passwordSection.style.display = "flex";
+    document.getElementById("passwordInput").value = ""; // Parola kutusunu temizle
+  } else {
+    document.querySelector(".container").style.display = "flex";
+    passwordSection.style.display = "none";
+  }
+}
+
+function prevSentence() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    updateSentence();
+  }
+}
+
+function nextSentence() {
+  if (currentIndex < sentences.length - 1) {
+    currentIndex++;
+    updateSentence();
+  }
+}
+
+function checkPassword() {
+  const correctPassword = "yuvam";
+  const entered = document.getElementById("passwordInput").value.trim();
+  if (entered === correctPassword) {
+    window.location.href = "index.html";
+  } else {
+    alert("Yanlış parola, tekrar dene!");
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") prevSentence();
+  if (e.key === "ArrowRight") nextSentence();
+});
+
+updateSentence();
+</script>
+
+</body>
+</html>
